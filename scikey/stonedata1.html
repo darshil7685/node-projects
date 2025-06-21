@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="width: 85%; margin: 0 7.5%">
+      <div style="text-align: center; padding-left: 50px">
+        <table>
+           <tr>
+            <% Object.keys(stoneData[0]).forEach(key => { %>
+              <% if (flag.is_all_column){ %>
+            <td><%= key %></td>
+            <% } %>
+            <% }) %>
+          </tr>
+            <% if (stoneData.length > 0) { %> 
+                <% stoneData.forEach(stone =>{ %>
+                  <% if (flag.is_all_column){ %>
+                    <tr>
+                    <% Object.keys(stone).forEach(key =>{ %>
+                      <% if(key.toLowerCase().indexOf("url") !== -1) {%>
+                          <td><a href="<%=stone[key] %>"><%=stone[key] %></a></td>
+                      <%}else{ %>
+                         <td><%= stone[key] %></td>
+                      <%}%>
+                    <% }); %>
+                    </tr>
+                    <%}%>
+                <% }); %>
+           <% }%>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

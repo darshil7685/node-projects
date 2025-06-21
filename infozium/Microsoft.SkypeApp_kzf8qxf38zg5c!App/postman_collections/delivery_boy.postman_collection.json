@@ -1,0 +1,67 @@
+{
+	"info": {
+		"_postman_id": "ad53632a-992f-4778-ada0-ab1463fea0a6",
+		"name": "delivery_boy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add Delivery Boy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"John\",\n    \"location\":\"bombay\",\n    \"loginId\":\"john123\",\n    \"password\":\"john123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/delivery/addDeliveryBoy",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"delivery",
+						"addDeliveryBoy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login delivery boy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n     \"loginId\":\"abc\",\n    \"password\":\"abc\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/api/delivery/loginDeliveryBoy",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"delivery",
+						"loginDeliveryBoy"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

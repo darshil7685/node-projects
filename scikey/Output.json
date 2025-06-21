@@ -1,0 +1,60 @@
+{
+  "output": [
+    {
+      "name": "Vegetables",
+      "children": [
+        {
+          "name": "Green",
+          "children": [
+            {
+              "name": "Broccoli"
+            },
+            {
+              "name": [
+                "Brussel",
+                "sprouts"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Red",
+          "children": [
+            {
+              "name": "carrat"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Fruit",
+      "children": [
+        {
+          "name": "Green",
+          "children": [
+            {
+              "name": "Green Apple"
+            }
+          ]
+        },
+        {
+          "name": "Red",
+          "children": [
+            {
+              "name": "Apple"
+            }
+          ]
+        },
+        {
+          "name": "Yellow",
+          "children": [
+            {
+              "name": "Banana"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

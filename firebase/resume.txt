@@ -1,0 +1,75 @@
+--------------summary
+
+->good working experience and results-driven Backend Developer with a focus on Node.js and JavaScript.
+
+->hands-on experience in designing and implementing scalable and efficient server-side solutions.
+
+-> Proficient in designing and implementing server-side architectures, 
+contributing to the development and maintenance of high-performance web applications. 
+-> Skilled in API development, database management and troubleshooting, with a commitment 
+to delivering scalable and efficient solutions.
+
+-> Software engineer with over 2 years of experience in Javascript, Node.js and SQL server.
+-> Experienced in designing and maintaining data warehouses, utilizing tools such as SSIS, proven ability to scale larger web applications.
+
+
+---------------------------------------Professional Summary--------------------------------------------
+
+Proficient and detail-oriented Node.js Backend Developer with 2.5 years of experience in developing, deploying, and maintaining 
+robust backend solutions. 
+Demonstrated expertise in building RESTful APIs and real-time applications using Node.js, Express, and Sails.js. Skilled in 
+managing databases with MongoDB, SQL Server, and Redis to ensure optimized data storage, retrieval, and caching strategies. 
+A team-oriented professional with a passion for implementing efficient, scalable, and secure backend architectures.
+
+--------------------Technical Skills
+
+Programming Languages : JavaScript, Basic Java
+Frameworks: Node.js, Express.js, Sails.js
+Databases: MSSQL ,RedisDB ,MongoDB
+Tools: Git, No SQL Booster, Postman, Jenkins, vs code, jira, ssms
+
+
+--------------SRKAY Consulting pvt.ltd. 06-2022-Present
+
+-> Played a key role in designing and implementing scalable and efficient backend architectures to 
+support the system's user base.
+
+->Developed and maintained server-side logic using Node.js and MS-SQL Server Database.
+
+->Implemented RESTful APIs to facilitate communication between the frontend and backend systems.
+
+->Designed and optimized database schemas, improving data retrieval and storage efficiency.
+
+->Worked closely with internal team, frontend developers and QA teams to ensure the quality of works.
+
+->Participated in agile development processes, attending daily stand-ups and contributing to sprint planning.
+
+->Proactively identified and addressed potential issues before they impacted system performance.
+
+
+Project
+Pure
+Developed an ERP system for a significant diamond manufacturing and selling company. 
+The system efficiently manages a vast database contains the graded diamonds, buyer information, client appointments, 
+and facilitates the dispatch of diamonds to various laboratories, also have the feature of the change the criteria of the
+diamonds as per the lab reports.
+It contains comprehensive reports for users,before-and-after lab comparisons of diamond parameters. 
+
+HCIS-Human Capital Information System
+HCIS is an admin panel and mobile applications for the HR management system.
+The system included broadcast, survey, attendance, leave management, gate pass module for manage the employee lifecycle,
+also have the summarize leave and attendance reports for the admin.
+
+https://staging.testdome.com/certificates/362982933f184a5f8de926e6ba9d7c88
+
+
+
+
+
+
+
+
+
+
+
+

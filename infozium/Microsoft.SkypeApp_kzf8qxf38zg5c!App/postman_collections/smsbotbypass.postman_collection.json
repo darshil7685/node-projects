@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "0df0cf46-51e2-40b8-a8ac-95d0fcb5acbc",
+		"name": "smsbotbypass",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "voice upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "service_file",
+							"type": "file",
+							"src": "/home/flonder/Downloads/ask-facebook.mp3"
+						},
+						{
+							"key": "service_name",
+							"value": "a",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:1337/voice/upload",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"voice",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "call",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"to\":\"919824470182\",\n    \"user\":\"test\",\n    \"service\":\"amazon\",\n    \"name\":\"abc\"\n    \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:1337/call",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"call"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

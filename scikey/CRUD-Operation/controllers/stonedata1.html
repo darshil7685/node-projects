@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body> 
+  <div>
+      <table id="contentToConvert">
+        <tr>
+          <td>
+            <table class="marg-t20" style="page-break-after:auto">
+              <tr>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"  [style.width.px]="200"><%=businessSummaryStoneDetailsPrintObject.companyNameSelected %></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold; text-align: center"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold; text-align: center" colspan="3" [style.width.px]="300"><%= businessSummaryStoneDetailsPrintObject.selectedKam %></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold; text-align: center" [style.width.px]="300" colspan="3"><%=businessSummaryStoneDetailsPrintObject.salesType.sale_type_name%></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr" [style.width.px]="300" colspan="3"><%=businessSummaryStoneDetailsPrintObject.salesTerms.term_name %></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr" [style.width.px]="80" colspan="3"><%= businessSummaryStoneDetailsPrintObject.systemDate %></td>&nbsp;
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr" [style.width.px]="80"  colspan="3"><%= businessSummaryStoneDetailsPrintObject.systemTime %></td>
+              </tr>
+              <tr>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">Type Of Inclusion</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">:-</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">B-Black</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">FR-Feather</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">CRL-Crystal</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">SPR-Spreaded</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">CLD-Cloud</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">PP-PinPoint</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">1-Minor</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">2-Medium</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">3-Major</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+              </tr>
+              <tr>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">Type Of Open & Extra Facet</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">:-</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">N-None</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">HL-Hair Line</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">SM-Small</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">MD-Medium</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">MJ-Major</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">HY-Heavy</td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+              </tr>
+            </table>   
+              <!-- table header name  -->
+                 <% if (businessSummaryStoneDetailsPrintObject.isFinalPricePrint){ %>
+                  <table style="border: 0px;  margin-top: 10px;" cellpadding= '0px' cellspacing='0px'>
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Sr. No.</td>
+                    <% Object.keys(print_mapping).forEach(function(headerkey){ %>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10"><%=print_mapping[headerkey]%></td>
+                    <%})%>
+
+                  <!-- <% if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+                    <% if(Object.keys(print_mapping).includes('base_rate')) {%>
+        
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">B.Rate</td>
+                    <%}%> 
+                    <% if(Object.keys(print_mapping).includes('base_percentage')) {%>
+                      
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">B.Off</td>
+                    <%}%>
+                    <% if(Object.keys(print_mapping).includes('base_amount')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">B.Amt</td>
+                    <%}%>
+                    <% if(Object.keys(print_mapping).includes('final_rate')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">F.Rate</td>
+                    <%}%>
+                    <% if(Object.keys(print_mapping).includes('final_percentage')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">F.Off</td>
+                    <%}%>
+                    <% if(Object.keys(print_mapping).includes('final_amount')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">F.Amt</td>
+                    <%}%>
+                    <% if(Object.keys(print_mapping).includes('price_rap')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">List rate</td>
+                    <%}%> 
+                  <%}%>
+                  <% if (businessSummaryStoneDetailsPrintObject.isOnlineDisplay) {%>
+                    <% if(Object.keys(print_mapping).includes('online_percentage')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Onl%</td>
+                    <%}%>
+                  <%}%>
+                  <% if (businessSummaryStoneDetailsPrintObject.isEventDisplay) {%>
+                    <% if(Object.keys(print_mapping).includes('event_percentage')) {%>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Evt%</td>
+                    <%}%>
+                  <%}%>                  -->
+              </tr>
+              <!-- fill data into table -->
+                    <% businessSummaryStoneDetailsPrintObject.gridData.forEach(function(data,index){ %>
+                      <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto"> 
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" ><%=(index+1)%></td>                    
+                      <% Object.keys(print_mapping).forEach(function(key){%>
+                      
+                       <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" ><%=data[key] %></td>
+                      
+                      <%})%>
+
+                      <!-- <% if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+                        <% if(Object.keys(print_mapping).includes('base_rate')) {%>
+                         
+                            <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.base_rate%></td>
+                          <%}%> 
+                        <% if(Object.keys(print_mapping).includes('base_percentage')) {%>
+                           
+                               <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.base_percentage%></td>
+                         <%}%>
+                        <% if(Object.keys(print_mapping).includes('base_amount')) {%>
+                           
+                               <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%= data.base_amount %></td>
+                           <%}%>
+                        <% if(Object.keys(print_mapping).includes('final_rate')) {%>
+                           
+                          <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.final_rate%></td>
+                        <%}%>
+                        <% if(Object.keys(print_mapping).includes('final_percentage')) {%>
+                           
+                          <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.final_percentage%></td>
+                        <%}%>
+                        <% if(Object.keys(print_mapping).includes('final_amount')) {%>
+                           
+                          <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.final_amount%></td>
+                        <%}%>
+                        <% if(Object.keys(print_mapping).includes('price_rap')) {%>
+                           
+                          <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;"  ><%=data.price_rap%></td>
+                        <%}%>
+                        <% if (businessSummaryStoneDetailsPrintObject.isOnlineDisplay) {%>
+                          <% if(Object.keys(print_mapping).includes('online_percentage')) {%>
+                             
+                            <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.online_percentage%></td>
+                          <%}%>
+                        <%}%>
+                        <% if (businessSummaryStoneDetailsPrintObject.isEventDisplay) {%>
+                          <% if(Object.keys(print_mapping).includes('event_percentage')) {%>
+                             
+                            <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.event_percentage%></td>
+                          <%}%>
+                        <%}%> 
+                      <%}%>                      -->
+                  </tr>
+                <% }) %>
+             
+                <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right" >Total</td>
+
+                <% businessSummaryStoneDetailsPrintObject.summaryGridData.forEach(summary=>{ %>
+                  <% Object.keys(print_mapping).forEach((key)=>{%>
+                   
+                  <%if(key == "shape_short_value"){%>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%=summary.pieces%></td>
+                  <%} else if(key == "base_amount"){%>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%=summary.base_amount%></td>
+                   <%} else if(key == "base_rate"){%>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%=summary.base_rate%></td>
+                   <%} else if(key == "base_percentage"){%>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%=summary.base_percentage%></td>
+                  <%} else {%>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"></td>
+                  <%}%>
+                    <%})%>
+              <%})%>
+                </tr>
+              <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right" >Total</td>
+
+              <% businessSummaryStoneDetailsPrintObject.summaryGridData.forEach(summary=>{ %>
+                <% Object.keys(summary).forEach((key) => {%>
+                <% Object.keys(print_mapping).forEach((key1)=>{%>
+                 
+                <%if(key == key1){%>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%= summary[key1]%></td>
+                <%} else {%>
+                  <!-- <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"></td> -->
+                <%}%>
+              <%})%>
+                  <%})%>
+            <%})%>
+            </tr>
+            <!-- <% businessSummaryStoneDetailsPrintObject.summaryGridData.forEach(summary=>{ %>
+                <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="2">Total</td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%=summary.pieces%></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="3"></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.total_carat   %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.avg_base_rate  %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.avg_base_off  %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.base_amount  %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="2"></td>
+                  <%if (businessSummaryStoneDetailsPrintObject.isOnlineDisplay) {%>
+                  <td  *ngIf="businessSummaryStoneDetailsPrintObject.isOnlineDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                  <%}%>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                  <%if (businessSummaryStoneDetailsPrintObject.isEventDisplay) {%>
+                  <td  *ngIf="businessSummaryStoneDetailsPrintObject.isEventDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                  <%}%>
+                  <%if (businessSummaryStoneDetailsPrintObject.isBuyerDisplay) {%>
+                  <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBuyerDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                  <%}%>
+                  <%if (businessSummaryStoneDetailsPrintObject.isPartyDisplay) {%>
+                  <td  *ngIf="businessSummaryStoneDetailsPrintObject.isPartyDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                  <%}%>
+                  <%if (businessSummaryStoneDetailsPrintObject.isBrokerDisplay) {%>
+                  <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBrokerDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                  <%}%>
+                   <%if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.avg_final_rate  %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.avg_final_off  %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.final_amount  %></td>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right" ><%=summary.avg_list_rate  %></td>
+                  <%}%>
+                  <td  style="border: 0.02pt solid  black; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="10"></td>
+                </tr>
+              <%})%> -->
+            </table>
+            <% }else {%> 
+              <!-- table header name -->
+              <table style="border: 0px;  margin-top: 10px;" cellpadding= '0px' cellspacing='0px'>
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Sr. No.</td>
+                    <% Object.keys(print_mapping).forEach(function(headerkey){ %>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10"><%=print_mapping[headerkey]%></td>
+                    <%})%>
+
+                    <!-- <% if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+                      <% if(Object.keys(print_mapping).includes('base_rate')) {%>
+                       
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">B.Rate</td>
+                      <%}%> 
+                      <% if(Object.keys(print_mapping).includes('base_percentage')) {%>
+                         
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">B.Off</td>
+                      <%}%>
+                      <% if(Object.keys(print_mapping).includes('base_amount')) {%>
+                                
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">B.Amt</td>
+                      <%}%>
+                      <% if(Object.keys(print_mapping).includes('price_rap')) {%>
+                         
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Rap Price</td>
+                      <%}%>
+                    <%}%>   -->
+                  </tr>
+
+                <!-- fill data into table -->
+                  <% businessSummaryStoneDetailsPrintObject.gridData.forEach(function(data,index){ %>
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto"> 
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" ><%=(index+1)%></td>                    
+                  <% Object.keys(print_mapping).forEach(function(key){%>
+                  <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" ><%=data[key] %></td>
+                  <%})%>
+
+                  <!-- <% if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+                    <% if(Object.keys(print_mapping).includes('base_rate')) {%>
+                       
+                          <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.base_rate%></td>
+                      <%}%> 
+                    <% if(Object.keys(print_mapping).includes('base_percentage')) {%>
+                       
+                            <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%=data.base_percentage%></td>
+                      <%}%>
+                    <% if(Object.keys(print_mapping).includes('base_amount')) {%>
+                       
+                            <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;" ><%= data.base_amount %></td>
+                        <%}%>
+                    <% if(Object.keys(print_mapping).includes('price_rap')) {%>
+                       
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px;  padding:1px; text-align: center;"><%=data.final_rate%></td>
+                    <%}%>
+                  <%}%> -->
+                <%})%>
+            </tr>
+                  
+                  <% businessSummaryStoneDetailsPrintObject.summaryGridData.forEach(summary=>{ %>
+                    <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="3">Total</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right"><%=summary.pieces%></td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="3"></td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.total_carat %></td>
+                      <%if (businessSummaryStoneDetailsPrintObject.isRFS) { %>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.avg_base_rate %></td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.avg_base_off  %></td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right"><%=summary.base_amount  %></td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right" ><%=summary.avg_list_rate%></td>
+                      <%}%>
+                      <td  style="border: 0.02pt solid  black;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="16"></td>
+                    </tr>
+                  <%})%>
+               </table>
+            <%}%>     
+        </td>
+     </tr>
+   </table>
+  </div>
+</body>
+</html>
+
+
+             

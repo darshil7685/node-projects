@@ -1,0 +1,318 @@
+{
+	"info": {
+		"_postman_id": "097cb3cb-6ffc-4918-8142-168a1055450e",
+		"name": "managers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "registerManager",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"abc\",\n    \"location\":\"xyz\",\n    \"email\":\"abc123456789012345\",\n    \"password\":\"123456\",\n    \"warehouse_id\":2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/register",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login manager",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{  \n    \"email\":\"abc123\",\n    \"password\":\"abc123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/authenticate",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all manager",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImlhdCI6MTY0NDQ2ODc1MiwiZXhwIjoxNjQ1MDczNTUyfQ.nFlr9jPoy16uBH-K71ox5ZuvvDu3GYSNUh4ugWWlsgo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "block manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY0Mzk2NjQ0OCwiZXhwIjoxNjQ0NTcxMjQ4fQ.yuDyRa_lq4bEcojF-H97y8oLYcGE2vs6iPfB6ShT9es",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/block/5",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"block",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "unblock manager",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/unblock/1",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"unblock",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "countMangers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY0Mzk2NjQ0OCwiZXhwIjoxNjQ0NTcxMjQ4fQ.yuDyRa_lq4bEcojF-H97y8oLYcGE2vs6iPfB6ShT9es",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/countManagers",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"countManagers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get manager by name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY0Mzk2NjQ0OCwiZXhwIjoxNjQ0NTcxMjQ4fQ.yuDyRa_lq4bEcojF-H97y8oLYcGE2vs6iPfB6ShT9es",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/abc",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"abc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get manager by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/getById/1",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"getById",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update by id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"123456789\",\n    \"name\":\"123456789\",\n    \"password\":\"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager/updateById/19",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager",
+						"updateById",
+						"19"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

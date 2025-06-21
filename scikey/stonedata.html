@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+  <head>
+
+  </head>
+  <body> 
+
+    <div>
+        <table id="contentToConvert">
+          <tr>
+            <td>
+              <table class="marg-t20" style="page-break-after:auto">
+                <tr>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"  [style.width.px]="200">{{businessSummaryStoneDetailsPrintObject.companyNameSelected}}</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold; text-align: center"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold; text-align: center" colspan="3" [style.width.px]="300">{{businessSummaryStoneDetailsPrintObject.selectedKam}}</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold; text-align: center" [style.width.px]="300" colspan="3">{{businessSummaryStoneDetailsPrintObject.salesType.sale_type_name}}</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr" [style.width.px]="300" colspan="3">{{businessSummaryStoneDetailsPrintObject.salesTerms.term_name}}</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr" [style.width.px]="80">{{businessSummaryStoneDetailsPrintObject.systemDate}}</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;" class="fr" [style.width.px]="80">{{businessSummaryStoneDetailsPrintObject.systemTime}}</td>
+                </tr>
+                <tr>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">Type Of Inclusion</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">:-</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">B-Black</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">FR-Feather</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">CRL-Crystal</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">SPR-Spreaded</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">CLD-Cloud</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">PP-PinPoint</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">1-Minor</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">2-Medium</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">3-Major</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                </tr>
+                <tr>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">Type Of Open & Extra Facet</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">:-</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">N-None</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">HL-Hair Line</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">SM-Small</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">MD-Medium</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">MJ-Major</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;">HY-Heavy</td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                  <td style="font-family: Courier New; font-size: 10px; font-weight: bold;"></td>
+                </tr>
+              </table>
+               <span *ngIf="pdfData.isFinalPricePrint else withoutFinalPrice">
+                 {{#if businessSummaryStoneDetailsPrintObject.isFinalPricePrint}}
+                <table style="border: 0px;  margin-top: 10px;" cellpadding= '0px' cellspacing='0px'>
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="5">Sr. No.</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:0px; font-weight: bold; text-align: center;" [style.width.px]="10">Cert</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="30">Shape</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Stone ID</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center" [style.width.px]="20">Cla</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center" [style.width.px]="5">Col</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">Carat</td>
+                     {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Rate</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Off</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Amt</td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Trm%</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Bld%</td>
+                    {{#if businessSummaryStoneDetailsPrintObject.isOnlineDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isOnlineDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Onl%</td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">WVD%</td>
+                    {{#if businessSummaryStoneDetailsPrintObject.isEventDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isEventDisplay"  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Evt%</td>
+                    {{/if}}
+                    <!-- <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBuyerDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Buy%</td>
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isPartyDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Prt%</td>
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBrokerDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Brk%</td> -->
+                    {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">F.Rate</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">F.Off</td> 
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">F.Amt</td> 
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">List rate</td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Ct</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Pl</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Sy</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Fl</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="5">D/R</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="110">Measurement</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="30">TD</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Tab</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 8px;  padding:1px; font-weight: bold; word-wrap: break-word; text-align: center;" [style.width.px]="40">SRK Comment</td>
+                    <td  style="border: 0.02pt solid  black; border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">Lu</td>
+                  </tr>
+                  <ng-container *ngFor="let data of businessSummaryStoneDetailsPrintObject.gridData">
+                     <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                      {{#each businessSummaryStoneDetailsPrintObject.gridData as |data|}}
+                       <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right;">{{@index}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:0px; text-align: center;" >{{data.certificate_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.shape_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.stoneid}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center" >{{data.clarity_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center" >{{data.color_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.carat}}</td>
+                      {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.base_rate}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.base_percentage}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.base_amount}}</td>
+                      {{/if}}
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.terms_percentage }}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.blind_percentage }}</td>
+                      {{#if businessSummaryStoneDetailsPrintObject.isOnlineDisplay}}
+                      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isOnlineDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.online_percentage }}</td>
+                      {{/if}}
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.wvd_percentage }}</td>
+                      {{#if businessSummaryStoneDetailsPrintObject.isEventDisplay}}
+                      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isEventDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.event_percentage }}</td>
+                      {{/if}}
+                      <!-- <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBuyerDisplay"style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.write_off_buyer_percentage}}</td>
+                      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isPartyDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.write_off_guarantor_percentage }}</td>
+                      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBrokerDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.write_off_broker_percentage }}</td> -->
+                      {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.final_rate }}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.final_percentage }}</td> 
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.final_amount  }}</td> 
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.price_rap  }}</td>
+                      {{/if}}
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.cut_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.polish_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.symmetry_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.fluor_short_value}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right">{{data.diameter}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px;text-align: left;">{{data.measurement}}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right">{{data.total_depth_percent  }}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right">{{data.table }}</td>
+                      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 7.5px; padding:1px; text-align: center;" >{{data.sgs}}</td>
+                      <td  style="border: 0.02pt solid  black;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" >{{data.luster_short_value}}</td>
+                    </tr>
+                    {{/each}}
+                 </ng-container>
+                <ng-container *ngFor="let summary of businessSummaryStoneDetailsPrintObject.summaryGridData">
+                  {{#each businessSummaryStoneDetailsPrintObject.summaryGridData as |summary|}}
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="2">Total</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right">{{summary.pieces}}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="3"></td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.total_carat   }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_base_rate  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_base_off  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.base_amount  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="2"></td>
+                    {{#if businessSummaryStoneDetailsPrintObject.isOnlineDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isOnlineDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                    {{#if businessSummaryStoneDetailsPrintObject.isEventDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isEventDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                    {{/if}}
+                    {{#if businessSummaryStoneDetailsPrintObject.isBuyerDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBuyerDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                    {{/if}}
+                    {{#if businessSummaryStoneDetailsPrintObject.isPartyDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isPartyDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                    {{/if}}
+                    {{#if businessSummaryStoneDetailsPrintObject.isBrokerDisplay}}
+                    <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBrokerDisplay" style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"></td>
+                    {{/if}}
+                    <!-- <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="7"></td> -->
+                    {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_final_rate  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_final_off  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_final_amount  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right" >{{summary.avg_list_rate  }}</td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="10"></td>
+                  </tr>
+                  {{/each}}
+                  </ng-container>
+                </table>
+              </span> 
+              <ng-template #withoutFinalPrice>
+                {{else}}
+                <table style="border: 0px;  margin-top: 10px;" cellpadding= '0px' cellspacing='0px'>
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="5">Sr. No.</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="0">Customer Comment</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:0px; font-weight: bold; text-align: center;" [style.width.px]="10">Cert</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="40">Shape</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Stone ID</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Cla</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="5">Col</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">Carat</td>
+                    {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Rate</td>                     
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Off</td>                  
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Amt</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">Rap Price</td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Ct</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Pl</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Sy</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Fl</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="5">D/R</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="140">Measurement</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="30">TD</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Tab</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 8px;  padding:1px; font-weight: bold; text-align: center; word-wrap: break-word" [style.width.px]="70">SRK Comment</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Lu</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">TW</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">SW</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">TB</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">SB</td>
+                    <td  style="border: 0.02pt solid  black; border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="140">T-C-G-P</td>
+                  </tr>
+                  <ng-container *ngFor="let data of businessSummaryStoneDetailsPrintObject.gridData">
+                      <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                        {{#each businessSummaryStoneDetailsPrintObject.gridData as |data|}}                        
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;">{{@index }}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right;"></td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:0px; text-align: center;" >{{data.certificate_short_name}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.shape_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.stoneid}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center" >{{data.color_short_value}}</td>]
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.issue_carat  }}</td>
+                        {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.base_rate  }}</td> 
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.base_percentage }}</td> 
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.base_amount }}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.price_rap  }}</td>
+                        {{/if}}
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.cut_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.polish_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.symmetry_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.fluor_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right">{{data.diameter}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" >{{data.measurement}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right">{{data.total_depth_percent  }}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right">{{data.table   }}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 7.5px; padding:1px;text-align: center;" >{{data.sgs}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.luster_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.table_white_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.side_white_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.table_black_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" >{{data.side_black_short_value}}</td>
+                        <td  style="border: 0.02pt solid  black; border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" >{{data.open_inclusions}}</td>
+                      </tr>
+                      {{/each}}
+                   </ng-container>
+                  <ng-container *ngFor="let summary of businessSummaryStoneDetailsPrintObject.summaryGridData">
+                    {{#each businessSummaryStoneDetailsPrintObject.summaryGridData as | summary |}}
+                  <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="3">Total</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: right">{{summary.pieces}}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="3"></td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.total_carat }}</td>
+                    {{#if businessSummaryStoneDetailsPrintObject.isRFS}}
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_base_rate }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.avg_base_off  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right">{{summary.base_amount  }}</td>
+                    <td  style="border: 0.02pt solid  black; border-right: 0px;   font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: right" >{{summary.avg_list_rate}}</td>
+                    {{/if}}
+                    <td  style="border: 0.02pt solid  black;   font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold;"  colspan="16"></td>
+                  </tr>
+                  {{/each}}
+                  </ng-container>
+                </table>
+                {{/if}}
+              </ng-template>
+            </td>
+        </table>
+      </div>
+    </body>
+   </html>

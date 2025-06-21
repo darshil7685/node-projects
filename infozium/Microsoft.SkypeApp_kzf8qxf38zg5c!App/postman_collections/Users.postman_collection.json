@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "186ec588-1a15-44bb-8aa3-20f90ecf8780",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"abcdef\",\n    \"location\":\"abdef\",\n    \"email\":\"abcdefg@gmail.com\",\n    \"password\":\"123456\",\n    \"manager_id\":1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/register",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login authenticate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"abcdefg@gmail.com\",\n    \"password\":\"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/authenticate",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJpYXQiOjE2NDQzMTU3MjQsImV4cCI6MTY0NDkyMDUyNH0.InQ5nSfjFkYFvANj5Z_fugRcJWCTRUSD_SpXl9OWtcc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "token",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/users",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "manager_id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "block user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/block/22",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"block",
+						"22"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "unblock user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/unblock/1",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"unblock",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "countUsers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY0Mzk2NjQ0OCwiZXhwIjoxNjQ0NTcxMjQ4fQ.yuDyRa_lq4bEcojF-H97y8oLYcGE2vs6iPfB6ShT9es",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/countUsers",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"countUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user by name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY0Mzk2NjQ0OCwiZXhwIjoxNjQ0NTcxMjQ4fQ.yuDyRa_lq4bEcojF-H97y8oLYcGE2vs6iPfB6ShT9es",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/xyz",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"xyz"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"abcxyz\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/update/3",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"update",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/users/getById/1",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"getById",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

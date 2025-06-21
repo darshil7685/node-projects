@@ -1,0 +1,47 @@
+John Doe
+
+123 Main Street, City, State, ZIP
+Email: john.doe@example.com | Phone: (123) 456-7890
+LinkedIn: linkedin.com/in/johndoe | GitHub: github.com/johndoe
+
+Professional Summary
+
+Experienced Software Developer with 5+ years in back-end development using Node.js. Proficient in designing, implementing, and maintaining scalable web applications. 
+Strong problem-solving skills and a proven ability to work in a collaborative team environment.
+
+Technical Skills
+
+Programming Languages: JavaScript, Python, Java
+Frameworks: Node.js, Express.js, React.js
+Databases: MongoDB, MySQL, PostgreSQL
+Tools: Git, Docker, Jenkins
+Cloud: AWS, Azure
+Professional Experience
+
+ABC Tech Solutions, City, State
+Software Developer
+June 2018 – Present
+
+Developed and maintained web applications using Node.js and Express.js.
+Implemented RESTful APIs to support front-end services.
+Collaborated with front-end developers to integrate user-facing elements with server-side logic.
+Optimized application performance and scalability.
+Participated in code reviews and provided constructive feedback to team members.
+XYZ Innovations, City, State
+Junior Software Developer
+January 2016 – May 2018
+
+Assisted in developing and maintaining web applications using JavaScript and Node.js.
+Conducted unit testing and debugging of applications.
+Contributed to database design and management using MongoDB.
+Worked in an Agile development environment.
+Education
+
+Bachelor of Science in Computer Science
+University of Technology, City, State
+Graduated: May 2015
+
+Certifications
+
+AWS Certified Solutions Architect
+Certified Node.js Developer

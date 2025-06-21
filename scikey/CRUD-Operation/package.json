@@ -1,0 +1,29 @@
+{
+  "name": "crud-operation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.4",
+    "async-parallel": "^1.2.3",
+    "async-waterfall": "^0.1.5",
+    "body-parser": "^1.20.0",
+    "ejs": "^3.1.8",
+    "exceljs": "^4.3.0",
+    "express": "^4.18.1",
+    "handlebars": "^4.7.7",
+    "html-pdf": "^3.0.1",
+    "joi": "^17.6.0",
+    "moment": "^2.29.4",
+    "mssql": "^8.1.2",
+    "nodemailer": "^6.7.7",
+    "nodemon": "^2.0.16"
+  }
+}

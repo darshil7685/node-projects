@@ -1,0 +1,9 @@
+{"ModelIndex":0,"ModelId":"54662","ModelName":"0_XLCXP","currentModel":"Male",
+"skintoneData":{"DefaultSkintone":0,"Skinetonelist":{"0":"FFFFFFFF","1":"E2B374FF","2":"D9B040FF","3":"8C6D1EFF","4":"674005FF"}},
+"bodtytypelist":[{"SelectbodyType":"Cloth","DefaultType":0,"HasColorChangeOption":false,"colortonelist":{}},
+{"SelectbodyType":"Hair","DefaultType":0,"HasColorChangeOption":true,
+    "colortonelist":{"0":"2E1F00FF","1":"674301FF","2":"7D4103FF","3":"AD6304FF","4":"AD9104FF","5":"000000FF","6":"6C6C6CFF"}},
+    {"SelectbodyType":"Shield","DefaultType":0,"HasColorChangeOption":false,"colortonelist":{}},
+    {"SelectbodyType":"Weapon","DefaultType":0,"HasColorChangeOption":false,"colortonelist":{}},
+    {"SelectbodyType":"Shoes","DefaultType":0,"HasColorChangeOption":true,
+    "colortonelist":{"0":"160707FF","1":"4B1F00FF","2":"823702FF","3":"C05F00FF","4":"FFA300FF","5":"907103FF"}}]}

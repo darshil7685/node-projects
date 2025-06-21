@@ -1,0 +1,59 @@
+{
+	"info": {
+		"_postman_id": "4b009b1c-2fee-46c8-b746-19c82b537112",
+		"name": "importData",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "upload excel",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/excel/upload/3",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"excel",
+						"upload",
+						"3"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "b2be2efc-4202-4ab5-aaf6-6d956f31f301",
+		"name": "errorHandling",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"abc\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000",
+					"host": [
+						"localhost"
+					],
+					"port": "8000"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/error",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"error"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIyLCJpYXQiOjE2NDQzMTU3MjQsImV4cCI6MTY0NDkyMDUyNH0.InQ5nSfjFkYFvANj5Z_fugRcJWCTRUSD_SpXl9OWtcc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/manager",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"manager"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

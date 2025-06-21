@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        </style>
+    </head>
+    <body>
+        <div style="width: 85%; margin: 0 7.5%;">
+            <div style="text-align: center; padding-left: 50px;">            
+                <h3>Student Report</h5>
+                <table>
+                    <tr>
+                       <% Object.keys(students[0]).forEach(key => { %>
+                            <td><%= key %></td>
+                        <% }) %>
+                    </tr>
+                <% if (students.length > 0) { %>
+                    <% students.forEach(student =>{ %>
+                        <tr>
+                        <% Object.keys(student).forEach(key =>{  %>
+                            <td><%= student[key] %></td>
+                        <% }); %>
+                        </tr>
+                    <% }); %>
+                <% }%>
+                </table>
+             </div>
+        </div>
+    </body>
+</html>
+
+              
+<span *ngIf="pdfData.isFinalPricePrint else withoutFinalPrice">
+    <% if (businessSummaryStoneDetailsPrintObject.isFinalPricePrint) { %>
+  <table style="border: 0px;  margin-top: 10px;" cellpadding= '0px' cellspacing='0px'>
+    <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="5">Sr. No.</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:0px; font-weight: bold; text-align: center;" [style.width.px]="10">Cert</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="30">Shape</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Stone ID</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center" [style.width.px]="20">Cla</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center" [style.width.px]="5">Col</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">Carat</td>
+        <% if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Rate</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Off</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">B.Amt</td>
+      <% } %>
+  
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Trm%</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Bld%</td>
+       <% if (businessSummaryStoneDetailsPrintObject.isOnlineDisplay) {%>
+  
+      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isOnlineDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Onl%</td>
+      <% } %>
+       <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">WVD%</td>
+       <% if (businessSummaryStoneDetailsPrintObject.isEventDisplay) {%>
+      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isEventDisplay"  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Evt%</td>
+      <% } %>
+  
+       <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBuyerDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Buy%</td>
+      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isPartyDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Prt%</td>
+      <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBrokerDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="10">Brk%</td>
+       <% if (businessSummaryStoneDetailsPrintObject.isRFS) {%>
+  
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">F.Rate</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">F.Off</td> 
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">F.Amt</td> 
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">List rate</td>
+      <% } %>
+       <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Ct</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Pl</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Sy</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="10">Fl</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="5">D/R</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="110">Measurement</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="30">TD</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:3px; font-weight: bold; text-align: center;" [style.width.px]="20">Tab</td>
+      <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 8px;  padding:1px; font-weight: bold; word-wrap: break-word; text-align: center;" [style.width.px]="40">SRK Comment</td>
+      <td  style="border: 0.02pt solid  black; border-bottom: 0px; font-family: Courier New; font-size: 10px;  padding:1px; font-weight: bold; text-align: center;" [style.width.px]="20">Lu</td>
+    </tr>
+    <ng-container *ngFor="let data of businessSummaryStoneDetailsPrintObject.gridData">
+       <tr class="table-ui" style="page-break-inside:avoid; page-break-after:auto">
+         <% businessSummaryStoneDetailsPrintObject.gridData.forEach((data)=>{ %>
+         <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right;"></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:0px; text-align: center;" ><%=data.certificate_short_value %></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" ><%=data.shape_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" ><%=data.stoneid%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center" ><%=data.clarity_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center" ><%=data.color_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.carat%></td>
+        <%if businessSummaryStoneDetailsPrintObject.isRFS %>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.base_rate%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.base_percentage%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.base_amount%></td>
+        <%}%>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.terms_percentage %></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.blind_percentage %></td>
+        <%if businessSummaryStoneDetailsPrintObject.isOnlineDisplay %>
+        <td  *ngIf="businessSummaryStoneDetailsPrintObject.isOnlineDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.online_percentage %></td>
+        <% } %>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.wvd_percentage %></td>
+        <%if businessSummaryStoneDetailsPrintObject.isEventDisplay %>
+        <td  *ngIf="businessSummaryStoneDetailsPrintObject.isEventDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.event_percentage %></td>
+        <% } %>
+        <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBuyerDisplay"style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.write_off_buyer_percentage}}</td>
+        <td  *ngIf="businessSummaryStoneDetailsPrintObject.isPartyDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.write_off_guarantor_percentage }}</td>
+        <td  *ngIf="businessSummaryStoneDetailsPrintObject.isBrokerDisplay" style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right">{{data.write_off_broker_percentage }}</td>
+        <%if businessSummaryStoneDetailsPrintObject.isRFS %>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.final_rate %></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.final_percentage %></td> 
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.final_amount  %></td> 
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: right"><%=data.price_rap  %></td>
+        <% } %>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" ><%=data.cut_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" ><%=data.polish_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" ><%=data.symmetry_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: center;" ><%=data.fluor_short_value%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right"><%=data.diameter%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px;text-align: left;"><%=data.measurement%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right"><%=data.total_depth_percent%></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:3px; text-align: right"><%=data.table %></td>
+        <td  style="border: 0.02pt solid  black; border-right: 0px;  border-bottom: 0px; font-family: Courier New; font-size: 7.5px; padding:1px; text-align: center;" ><%=data.sgs%></td>
+        <td  style="border: 0.02pt solid  black;  border-bottom: 0px; font-family: Courier New; font-size: 9px; padding:1px; text-align: center;" ><%=data.luster_short_value%></td>
+      </tr>
+    <% }) %>
+    </ng-container>
+    <% } %>
+    
+    </table>
+  
+  </span>

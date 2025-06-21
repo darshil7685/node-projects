@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #messages { border: 1px solid #ddd; height: 300px; overflow-y: auto; padding: 10px; }
+        #input { width: calc(100% - 60px); }
+        button { width: 50px; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Chat</h1>
+    <div id="messages"></div>
+    <input id="input" type="text" placeholder="Type a message..." />
+    <button id="send">Send</button>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const input = document.getElementById('input');
+        const sendButton = document.getElementById('send');
+
+        // Connect to the WebSocket server
+        const socket = new WebSocket('ws://localhost:8080');
+
+        // Handle incoming messages
+        socket.addEventListener('message', (event) => {
+            const newMessage = document.createElement('div');
+            newMessage.textContent = event.data;
+            messagesDiv.appendChild(newMessage);
+        });
+
+        // Send messages to the server
+        // sendButton.addEventListener('click', () => {
+        //     if (input.value.trim()) {
+        //         socket.send(input.value);
+        //         input.value = '';
+        //     }
+        // });
+
+        // Log connection status
+        socket.addEventListener('open', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.addEventListener('close', () => {
+            console.log('Disconnected from WebSocket server');
+        });
+    </script>
+</body>
+</html>

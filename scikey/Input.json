@@ -1,0 +1,30 @@
+{
+  "input": [
+    {
+      "Green": [
+        {
+          "Vegetables": "Broccoli"
+        },
+        {
+          "Vegetables": "Brussel,sprouts"
+        },
+        {
+          "Fruit": "Green Apple"
+        }
+      ],
+      "Red": [
+        {
+          "Fruit": "Apple"
+        },
+        {
+          "Vegetables": "carrat"
+        }
+      ],
+      "Yellow": [
+        {
+          "Fruit": "Banana"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+https://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@github.com/darshilifz/game_api.git
+
+git remote set-url origin 
+
+kill port ubuntu
+sudo kill -9 $(sudo lsof -t -i:9001)
+
+
+
+
+// "repository": {
+  //   "type": "git",
+  //   "url": "git+ssh://git@gitlab.com/DaynaChandera/teen-patti-server.git"
+  // },
+"keywords": [],
+  "bugs": {
+    "url": "https://gitlab.com/DaynaChandera/teen-patti-server/issues"
+  },
+  "homepage": "https://gitlab.com/DaynaChandera/teen-patti-server#readme"

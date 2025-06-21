@@ -1,0 +1,39 @@
+{
+    "shop_timing":[
+        {
+            "day": "sunday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        },
+        {
+            "day": "monday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        },
+        {
+            "day": "tuesday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        },
+        {
+            "day": "wednesday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        },
+        {
+            "day": "thursday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        },
+        {
+            "day": "friday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        },
+        {
+            "day": "saturday",
+            "opentime": "08:00AM",
+            "closetime": "10:00PM"
+        }
+    ]
+}

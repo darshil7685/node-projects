@@ -1,0 +1,1308 @@
+USE [dev_srk_db]
+GO
+/****** Object:  StoredProcedure [Stock].[usp_InwardMfg_Save]    Script Date: 09-01-2023 12:41:04 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*************************************************************************
+*
+* SRKAY CG
+* __________________
+*
+* 2017 - SRKAY CG
+* All Rights Reserved.
+*
+* NOTICE: All information contained herein is, and remains the property of SRKAY CG.
+* The intellectual and technical concepts contained herein are proprietary to SRKAY CG.
+* Dissemination of this information or reproduction of this material is strictly forbidden unless prior written permission is obtained from SRKAY CG.
+*
+* STORED PROCEDURE : [Master].[[usp_InwardMfg_Save]].
+* DESCRIPTION	: NULL
+*
+** Change History
+**************************
+** PR	|	 Date		|   Author		     |	    Description
+** --	|	----------	|  -------------     | ---------------------------------------
+** 1	|	20-09-2018	| Nikhil Sangani     | inward stone details in mumbai stock
+** 2    |   13-02-2019  | Jevin			     | added created datetime while insert stone_details
+** 3    |   24-04-2020  | Prapti 		     | 	added condition to insert record into BL update table
+** 4	|	08-08-2020	| Jevin			     | added column for only infotmation purpose parcel_id,invoice_id,rough_carat,mines_code,mine_mine_origin_code added in packet.STONE_ORIGINAL_LAB_DETAILS
+** 5	|	14-08-2020	| Jevin			     | certificate eligibility support added
+** 6	|	27-08-2020	| Jevin			     | is_cbc_transfer flag added
+** 7	|	07-09-2020	| Jevin			     | Stock.VENDOR_STOCK_SUMMARY in sizetype key STKACC changed to LABEXP
+** 8	|	07-09-2020	| Jevin			     | reference_number column added in Packet.STONE_CERTIFICATE_ELIGIBLE_DETAILS table
+** 9	|	08-10-2020	| Nikhil Sangani	 | Stock.VENDOR_STOCK_SUMMARY in sizetype key STKACC changed to LABEXP
+** 10	|	20-11-2020	| Nikhil Sangani	 | stone department master department date validation added
+** 11	|	25-11-2020	| Mukesh Thummar     | Order details changes added and order and sub_order column removed 
+** 12	|	27-11-2020	| Jevin			     | order_id not null condition added
+** 13	|	28-11-2020	| Jevin			     | vendoruser primary record get for order details
+** 14	|	08-12-2020	| Jevin			     | mfg_rap_year_month,mfg_rap_number column added while inward from mfg
+** 15	|	21-12-2020	| Nikhil Sangani	 | COUNTRY_ORIGIN column data insert into stone_Details table and commented query for mfg certificate insert into stone lab master
+** 16	|	23-12-2020	| Ritesh Khatri	     | stone_rates update column change and added new columns.
+** 17	|	10-02-2021	| Nikhil Sangani     | stone process code adde in stone details update
+** 18	|	10-02-2021	| Nikhil Sangani,    | Satish Kayada,Prapti Sakariya  add primary user code while insert history
+** 19	|	10-02-2021	| Nikhil Sangani     | begin transaction added in vendor stone details
+** 20	|	11-02-2021	| Chiman Shingala    | remove merge statement for MAT.order_stone data insert
+** 21	|	11-02-2021	| Nikhil Sangani     | commented Audit.STONE_DETAILS_BL_UPDATE_HISTORY merge statment
+** 22	|	18-02-2021	| Jevin Ambaliya	 | srk_certificate update in stone_details
+** 23	|	18-03-2021  | Megha shroff       | update action code in packet.stone_details
+** 24	|	05-04-2021  | Megha shroff       | set by @current_datetime instead of calling direct function    
+** 24   |    16-04-2021 | Megha shroff       | added ritest bhai change (25-12-2020) for additional_cost_percentage
+** 25   |    23-04-2021 | Nikhil Sangani     | duplicate data insert issue fixed in vendor_stock_summary
+** 26   |    24-04-2021 | Megha shroff       | is_rate_freeze = 1 for order stone
+** 27   |    04-05-2021 | MEgha shroff       | added is_rate_freeze in insert
+** 28   |    13-10-2021 | Chirag Patel       | Added SGS MFG Comments(MILKY STONE,RED SPOT,GREEN SPOT) as per the Inclusions at time of Stock Inward
+** 29	|	14-12-2021	|Nishit Langaliya    | Transfer merge into to normal insert into and update query
+** 30   |    22/11/2022 | Nishant Rudani     | add 2 parameter in insert nd upsert on stone_details table
+-- =============================================
+**************************/
+ALTER   PROCEDURE [Stock].[usp_InwardMfg_Save]
+  @STONEID Stock.STONEID READONLY,
+  @INWARD_MFG_DATA [Stock].[INWARD_MFG_DATA] READONLY,
+  @modified_by SMALLINT =0 ,
+  @modified_iplocation_id INT = 0,
+  @action_code int = 0,
+  @apps_code int = 0
+  AS
+  BEGIN
+
+		declare @INWARD_MFG_Unique_Data [Stock].[INWARD_MFG_DATA]
+		insert into @INWARD_MFG_Unique_Data(export_datetime,group_number,lot_code)
+		select distinct export_datetime,group_number,lot_code from @INWARD_MFG_DATA
+
+		DECLARE @ErrorMessage NVARCHAR(4000),
+				@ErrorSeverity INT,
+				@ErrorLine INT
+	    --- EXCEUTION LOG ---
+		DECLARE @PROCNAME VARCHAR(50) = OBJECT_SCHEMA_NAME(@@PROCID) + '.' + OBJECT_NAME(@@PROCID)
+		--EXEC [dbo].[LOGINFO] @ProcedureName = @PROCNAME,@LogType = 'INFO',@ErrorLine = NULL,@ErrorMessage = NULL,@ExecutedBy = NULL,@HostIPName = '',@FormName = '',@AdditionalInfo = 'EXCEUTION STARTED'
+
+  		DECLARE @current_datetime DATETIME = Master.Fn_GetISTDATETIME();
+		DECLARE @department_code TINYINT = Master.getDepartmentCode('STK');
+		DECLARE @srk_certificate TINYINT = Master.getCertificateCode('SRK')
+		--declare @action_Code int = (select action_code from master.ACTION_MASTER where action_key = 'STOCK_INWARD')
+		Declare @department_count int = 0
+		declare @luster_inc_code smallint = (select inclusion_code from master.INCLUSION_MASTER with(nolock) where inclusion_type_id = 'LINC' and inclusion_short_name = 'EX')
+		declare @tinge_inc_code smallint = (select inclusion_code from master.INCLUSION_MASTER with(nolock) where inclusion_type_id = 'TINC' and inclusion_short_name = 'N')
+		declare @ec_comment_code smallint = (select comment_id from Master.STONE_COMMENT_MASTER with(nolock) where certificate_code=@srk_certificate and comment_type_key = 'sgs_comment' and comment_short_name = 'EC')
+		
+		DECLARE @milky_stone_comment varchar(128) = ( select STRING_AGG(inclusion_code,',') from master.INCLUSION_MASTER with(nolock) where inclusion_type_id = 'Linc' and inclusion_short_name in ( 'ML1','ML2','ML3'))
+	    DECLARE @red_spot_comment varchar(128) = ( select STRING_AGG(inclusion_code,',') from master.INCLUSION_MASTER with(nolock) where inclusion_type_id = 'SSinc' and inclusion_short_name in ( 'SR1','SR2'))
+	    DECLARE @green_spot_comment varchar(128) = ( select STRING_AGG(inclusion_code,',') from master.INCLUSION_MASTER with(nolock) where inclusion_type_id = 'SSinc' and inclusion_short_name in ( 'SG1','SG2'))
+		--Declare @comment_ids varchar(128) = (select STRING_AGG(comment_id,',') from master.STONE_COMMENT_MASTER where comment_name in ('MILKY STONE','red spot','green spot') and certificate_code = 0)
+
+  		SELECT  @department_count =  count(distinct department_date) FROM Master.STONE_DEPARTMENT_MASTER WITH(NOLOCK) where size_type_key = 'LABEXP' 
+		if @department_count <> 1
+ 		BEGIN
+ 			select 'Department date is mismatch in stone department master' as validation_message 
+ 		END
+		else
+		begin
+ 			BEGIN TRY
+			--BEGIN TRANSACTION t1
+
+ 			SELECT outResult.stoneid,validation_message
+ 			From (
+					SELECT stn.stoneid,'Stone is in Final' validation_message 
+					FROM @STONEID stn
+					left join Packet.VENDOR_STONE_DETAILS s WITH(NOLOCK) on s.stoneid = stn.stoneid
+					WHERE  s.is_stock_final = 1
+					
+	
+ 				--SELECT stone.stoneid,[Packet].usp_fn_InwardMfg_Check(stone.stoneid) validation_message
+ 				--FROM @STONEID stone
+ 			) As outResult
+ 			where validation_message <> ''
+		
+ 			--if @@ROWCOUNT > 0
+ 			--BEGIN
+ 			--	COMMIT transaction
+ 			--	return;
+ 			--END
+ 				DECLARE @mfg_certificate TINYINT = Master.getCertificateCode('MFG')
+ 				DECLARE @process_code TINYINT = Master.getProcessCode('NEW')
+ 				--DECLARE @department_code TINYINT = Master.getDepartmentCode('STK')
+
+
+  				DECLARE @TRNYEAR VARCHAR(10) = ''
+  				SELECT @TRNYEAR = configuration_value
+  				FROM Master.CONFIGURATION_MASTER with(nolock)
+  				WHERE configuration_key = 'SRK_CURRENT_YEAR'
+
+  				Declare @department_date DATE = null
+  				SELECT @department_date = MAX(department_date)
+  				FROM Master.STONE_DEPARTMENT_MASTER WITH(NOLOCK) where size_type_key = 'LABEXP'
+			
+				DECLARE @shape_code varchar(128) =  (SELECT STRING_AGG(sm.shape_code,',') FROM Master.SHAPE_MASTER sm WITH(NOLOCK) WHERE sm.shape_code_key IN ('RBC','HB','TRI','OT'))
+				DECLARE @shape_code_rbc smallint =  (SELECT sm.shape_code FROM Master.SHAPE_MASTER sm WITH(NOLOCK) WHERE sm.shape_code_key IN ('RBC'))
+				DECLARE @REMARK_TYPE_CODE TINYINT = (select REMARK_TYPE_CODE from master.REMARK_TYPE_MASTER WITH(NOLOCK) where REMARK_TYPE_KEY = 'MFG_Remark')
+				
+				declare @iclean_inc_type_code smallint = (select inclusion_type_code from master.INCLUSION_TYPE_MASTER with(nolock) where inclusion_type_id = 'IClean')
+				declare @iclean_inc_code smallint = (select inclusion_code from master.INCLUSION_MASTER with(nolock) where inclusion_type_code = @iclean_inc_type_code and inclusion_short_name = 'Y')
+
+		
+				select T.stoneid, T.vendor_lot_code, T.vendor_serial_no, T.issue_carat packet_carat,@srk_certificate certificate_code, T.clarity_code, T.clarity_sign,
+  					T.color_code, T.color_sign, T.cut_code, T.polish_code, T.symmetry_code, T.fluorescence_code,T.packet_base_rate,T.packet_rate, T.packet_percentage,
+  					T.rfid_tag, T.is_order_confirm, T.is_order_missed, T.lab_control_no,T.is_fm_eligible,
+ 					T.is_cm_eligible,T.clv_tag,T.mines_code, T.parcel_id, T.invoice_id, rough_carat, T.makable_carat,T.rap_year_month , T.rap_number,
+					T.business_logic_code,T.COUNTRY_ORIGIN,clv_lot_code,T.mine_origin_code,is_rjc,is_bpp,srk_invoice_id, clv_serial_number,shape_code,
+					cost_rate , cost_perercentage, dollar_rate, dollar_percentage, system_rate, system_percentage, order_no,
+					original_rate,original_percentage,sub_orderno,T.vendor_code,T.vendor_group_number,vendor_exportdatetime,vendor_user_code,remark
+					,T.certificate_no, T.is_eye_clean, T.diameter_length, T.diameter_width, T.total_depth, T.tabled, T.height, T.measurement, T.crown_angle, T.crown_height
+					, T.pavalion_angle, T.pavalion_height, T.star_length, T.lower_half, T.girdle, T.from_girdle_code, T.to_girdle_code, T.certificate_code as vsd_certificate_code,
+					T.current_ownership_branch_code,
+					T.mfg_ownership_branch_code
+				into #vendor_stone_details
+  				From Packet.VENDOR_STONE_DETAILS T WITH(NOLOCK)
+  					LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast WITH(NOLOCK) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+  					LEFT JOIN @STONEID stn ON stn.stoneid = T.stoneid
+				Where stn.stoneid = T.stoneid
+  					And VendorUserMast.is_primary = 1
+  					And ISNULL(T.is_stock_final,0) = 0
+
+				UPDATE dest
+				Set Dest.lot_code = vsd.vendor_lot_code,
+  					Dest.serial_number = vsd.vendor_serial_no,
+ 					Dest.certificate_code = @srk_certificate,
+  					Dest.rfid_tag = vsd.rfid_tag,
+  					Dest.transaction_year = @TRNYEAR,
+ 					--Dest.stone_process_code = process_code,
+  					Dest.modified_datetime=@current_datetime,
+  					Dest.inward_datetime = @current_datetime,
+  					Dest.modified_by = @modified_by,
+  					Dest.operation_remark = 'Stock Inward',
+  					Dest.modified_iplocation_id = @modified_iplocation_id,
+					Dest.apps_code = @apps_code,
+  					Dest.control_number = vsd.lab_control_no,
+  					Dest.mfg_rap_year_month = vsd.rap_year_month,
+  					Dest.mfg_rap_number = vsd.rap_number,
+ 					Dest.department_code = @department_code,
+					Dest.COUNTRY_ORIGIN = vsd.COUNTRY_ORIGIN,
+					Dest.action_code = @action_code,
+					Dest.mfg_ownership_branch_code = vsd.mfg_ownership_branch_code,
+					Dest.current_ownership_branch_code = vsd.current_ownership_branch_code
+				From #vendor_stone_details vsd
+				LEFT JOIN Packet.STONE_DETAILS dest WITH(NOLOCK) on dest.stoneid = vsd.stoneid
+				--left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_ACTIONS BLAction WITH(NOLOCK) on BLAction.action_code = @action_code AND BLAction.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = T.business_logic_code
+				--left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM DestinationBLKey WITH(NOLOCK) on DestinationBLKey.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = BLAction.resulting_business_logic_code
+				--left Join Master.PROCESS_STATUS SourcePS WITH(NOLOCK)  ON SourcePS.process_status_code = DestinationBLKey.process_status_code
+  				Where dest.stoneid = vsd.stoneid
+				and dest.stoneid is not null
+
+				SELECT
+ 					vsd.stoneid, vsd.vendor_lot_code, vsd.vendor_serial_no,vsd.rfid_tag, vsd.lab_control_no,
+ 					BLAction.resulting_business_logic_code,
+					status_code, process_code, DestinationBLKey.location_code,vsd.rap_year_month, vsd.rap_number,
+					vsd.COUNTRY_ORIGIN,vsd.current_ownership_branch_code,vsd.mfg_ownership_branch_code
+				into #stone_details
+				From #vendor_stone_details vsd
+				left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_ACTIONS BLAction WITH(NOLOCK) on BLAction.action_code = @action_code AND BLAction.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = vsd.business_logic_code
+				left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM DestinationBLKey WITH(NOLOCK) on DestinationBLKey.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = BLAction.resulting_business_logic_code
+				left Join Master.PROCESS_STATUS	SourcePS WITH(NOLOCK)  ON SourcePS.process_status_code = DestinationBLKey.process_status_code
+				LEFT JOIN Packet.STONE_DETAILS dest WITH(NOLOCK) on dest.stoneid = vsd.stoneid
+  				Where dest.stoneid is null
+
+				INSERT INTO Packet.STONE_DETAILS
+ 				(
+ 					stoneid, lot_code, serial_number, certificate_code,rfid_tag,inward_datetime,operation_remark,transaction_year, control_number,
+ 					created_by,created_datetime,created_iplocation_id,apps_code,business_logic_code,
+					stone_status_code, stone_process_code, department_Code, location_code,mfg_rap_year_month, mfg_rap_number,
+					COUNTRY_ORIGIN,action_code,current_ownership_branch_code,mfg_ownership_branch_code
+ 				)
+ 				SELECT
+ 					vsd.stoneid, vsd.vendor_lot_code, vsd.vendor_serial_no, @srk_certificate,vsd.rfid_tag,@current_datetime,'Stock Inward',@TRNYEAR, vsd.lab_control_no,
+ 					@modified_by,@current_datetime,@modified_iplocation_id,@apps_code,vsd.resulting_business_logic_code,
+					status_code, process_code, @department_Code, vsd.location_code,vsd.rap_year_month, vsd.rap_number,
+					vsd.COUNTRY_ORIGIN,@action_code,vsd.current_ownership_branch_code,vsd.mfg_ownership_branch_code
+				From #stone_details vsd
+ 				
+
+
+				--Merge Into Packet.STONE_DETAILS As Dest
+  		--		Using(
+  		--			select T.stoneid, T.vendor_lot_code, T.vendor_serial_no, T.issue_carat packet_carat,@srk_certificate certificate_code, T.clarity_code, T.clarity_sign,
+  		--				T.color_code, T.color_sign, T.cut_code, T.polish_code, T.symmetry_code, T.fluorescence_code,T.packet_base_rate,T.packet_rate, T.packet_percentage,
+  		--				T.rfid_tag, T.is_order_confirm, T.is_order_missed,
+				--		--order_number, sub_order_number ,
+				--		@process_code process_code, T.lab_control_no,T.is_fm_eligible,
+ 			--			T.is_cm_eligible,T.clv_tag,T.mines_code, T.parcel_id, T.invoice_id, rough_carat, T.makable_carat,T.rap_year_month , T.rap_number,
+				--		T.business_logic_code,BLAction.resulting_business_logic_code, status_code as stone_status_code,process_code as stone_process_code,department_Code, DestinationBLKey.location_Code
+				--		,T.COUNTRY_ORIGIN,@action_code action_code
+  		--			From Packet.VENDOR_STONE_DETAILS T WITH(NOLOCK)
+  		--				--LEFT JOIN Master.ORDER_MASTER OrderMaster ON T.order_no = OrderMaster.order_number AND T.sub_orderno = OrderMaster.sub_order_number
+  		--				LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast WITH(NOLOCK) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+  		--				LEFT JOIN @STONEID stn ON stn.stoneid = T.stoneid
+				--		left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_ACTIONS BLAction WITH(NOLOCK) on BLAction.action_code = @action_code AND BLAction.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = T.business_logic_code
+				--		left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM DestinationBLKey WITH(NOLOCK) on DestinationBLKey.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = BLAction.resulting_business_logic_code
+				--		left Join Master.PROCESS_STATUS	SourcePS WITH(NOLOCK)  ON SourcePS.process_status_code = DestinationBLKey.process_status_code
+						
+  		--			Where 1=1
+  		--				AND stn.stoneid = T.stoneid
+  		--				And VendorUserMast.is_primary = 1
+  		--				And ISNULL(T.is_stock_final,0) = 0
+  		--		)As Sou On Dest.stoneid = Sou.stoneid
+  		--		When Matched THEN
+  		--		Update
+  		--		Set Dest.lot_code = Sou.vendor_lot_code,
+  		--			Dest.serial_number = Sou.vendor_serial_no,
+ 			--		Dest.certificate_code = Sou.certificate_code,
+  		--			Dest.rfid_tag = Sou.rfid_tag,
+  		--			Dest.transaction_year = @TRNYEAR,
+ 			--		Dest.stone_process_code = Sou.stone_process_code,
+  		--			Dest.modified_datetime=@current_datetime,
+  		--			Dest.inward_datetime = @current_datetime,
+  		--			Dest.modified_by = @modified_by,
+  		--			Dest.operation_remark = 'Stock Inward',
+  		--			Dest.modified_iplocation_id = @modified_iplocation_id,
+				--	Dest.apps_code = @apps_code,
+  		--			Dest.control_number = Sou.lab_control_no,
+  		--			Dest.mfg_rap_year_month = Sou.rap_year_month,
+  		--			Dest.mfg_rap_number = Sou.rap_number,
+ 			--		Dest.department_code = @department_code,
+				--	Dest.COUNTRY_ORIGIN = Sou.COUNTRY_ORIGIN,
+				--	Dest.action_code = Sou.action_code
+
+  		--		When Not Matched Then
+
+				--INSERT
+ 			--	(
+ 			--		stoneid, lot_code, serial_number, certificate_code,rfid_tag,inward_datetime,operation_remark,transaction_year, control_number,
+ 			--		created_by,created_datetime,created_iplocation_id,apps_code,business_logic_code,
+				--	stone_status_code, stone_process_code, department_Code, location_code,mfg_rap_year_month, mfg_rap_number,
+				--	COUNTRY_ORIGIN,action_code
+ 			--	)
+  		--		VALUES
+ 			--	(
+ 			--		stoneid, vendor_lot_code, vendor_serial_no, certificate_code,rfid_tag,@current_datetime,'Stock Inward',@TRNYEAR, lab_control_no,
+ 			--		@modified_by,@current_datetime,@modified_iplocation_id,@apps_code,resulting_business_logic_code,
+				--	stone_status_code, stone_process_code, department_Code, location_code,sou.rap_year_month, Sou.rap_number,
+				--	COUNTRY_ORIGIN,@action_code
+ 			--	);
+
+				--Merge Into Audit.STONE_DETAILS_BL_UPDATE_HISTORY As Dest
+  		--		Using(
+  		--			select T.stoneid,@department_code as department_Code,@action_code as action_code,T.business_logic_code as input_business_logic_code, BLAction.resulting_business_logic_code as output_business_logic_code, 
+				--	DestinationBLKey.confirm_type_code as confirm_type_code
+				--, DestinationBLKey.hold_type_code as hold_type_code,status_code as stone_status_code,process_code as stone_process_code, 
+				--DestinationBLKey.location_Code as location_Code
+  		--			From Packet.VENDOR_STONE_DETAILS T
+				--		LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+  		--				LEFT JOIN @STONEID stn ON stn.stoneid = T.stoneid
+				--		left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_ACTIONS BLAction on BLAction.action_code = @action_code AND BLAction.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = T.business_logic_code
+				--		left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM DestinationBLKey on DestinationBLKey.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = BLAction.resulting_business_logic_code
+				--		left Join Master.PROCESS_STATUS	SourcePS  ON SourcePS.process_status_code = DestinationBLKey.process_status_code
+
+  		--			Where 1=1
+  		--				AND stn.stoneid = T.stoneid
+				--		And VendorUserMast.is_primary = 1
+
+  		--		)As Sou On Dest.stoneid = Sou.stoneid
+  		--		When Matched THEN
+  		--		Update
+  		--		Set Dest.input_business_logic_code = Sou.input_business_logic_code,
+  		--			Dest.output_business_logic_code = Sou.output_business_logic_code,
+ 			--		Dest.department_Code = Sou.department_Code,
+  		--			Dest.action_code = Sou.action_code,
+  		--			Dest.apps_code = @apps_code,
+ 			--		Dest.created_datetime = @current_datetime,
+  		--			Dest.created_by=@modified_by,
+  		--			Dest.created_iplocation_id = @modified_iplocation_id,
+  		--			Dest.confirm_type_code = Sou.confirm_type_code,
+  		--			Dest.hold_type_code = Sou.hold_type_code,
+  		--			Dest.status_code = Sou.stone_status_code,
+				--	Dest.process_code = Sou.stone_process_code,
+  		--			Dest.location_Code = Sou.location_Code
+ 				
+  		--		When Not Matched Then
+  		
+				INSERT into Audit.STONE_DETAILS_BL_UPDATE_HISTORY
+ 				(
+ 					stoneid,department_Code,action_code,input_business_logic_code,output_business_logic_code,
+				apps_code,created_datetime,created_by,created_iplocation_id,confirm_type_code,hold_type_code,
+				status_code,process_code,location_code,form_name
+				)
+				(
+  					select vsd.stoneid,@department_code , @action_code ,vsd.business_logic_code, BLAction.resulting_business_logic_code, 
+					@apps_code,@current_datetime,@modified_by, @modified_iplocation_id,
+					DestinationBLKey.confirm_type_code
+					, DestinationBLKey.hold_type_code ,status_code ,process_code , 
+					DestinationBLKey.location_Code,'IMS Inward'
+  					From #vendor_stone_details vsd
+					left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_ACTIONS BLAction WITH(NOLOCK) on BLAction.action_code = @action_code AND BLAction.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = vsd.business_logic_code
+					left join master.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM DestinationBLKey WITH(NOLOCK) on DestinationBLKey.PROCESS_STATUS_LOCATION_DEPARTMENT_HOLD_CONFIRM_code = BLAction.resulting_business_logic_code
+					left Join Master.PROCESS_STATUS	SourcePS WITH(NOLOCK) ON SourcePS.process_status_code = DestinationBLKey.process_status_code
+  				)
+  			--	VALUES
+ 				--(
+ 				--	Sou.stoneid, Sou.department_Code, Sou.action_code, Sou.input_business_logic_code
+					--, Sou.output_business_logic_code, @apps_code,@current_datetime,@modified_by,
+					--@modified_iplocation_id, Sou.confirm_type_code, Sou.hold_type_code, Sou.stone_status_code,
+					--Sou.stone_process_code,Sou.location_Code,'IMS Inward'
+ 				--	);
+			
+
+  				MERGE INTO Packet.STONE_ORIGINAL_LAB_DETAILS AS Dest
+  				Using #vendor_stone_details Sou On Dest.stoneid = Sou.stoneid
+				--( 
+  				--	select T.stoneid, T.clarity_code, T.clarity_sign, T.color_code, T.color_sign, T.cut_code, T.polish_code, T.symmetry_code, T.fluorescence_code,
+  				--		T.vendor_lot_code mfg_lot_code, T.vendor_serial_no mfg_serial_number, T.clv_lot_code clv_lot_code, T.clv_serial_number clv_serial_number, 
+						--T.clv_tag clv_tag,T.parcel_id,T.invoice_id,T.rough_carat,T.mines_code,T.mine_origin_code,is_rjc,is_bpp,srk_invoice_id
+  				--	From Packet.VENDOR_STONE_DETAILS T WITH(NOLOCK)
+  				--		--LEFT JOIN Master.ORDER_MASTER Old ON T.order_no > 1000 AND T.order_no = Old.old_order_code
+  				--		--LEFT JOIN Master.ORDER_MASTER New ON T.order_no < 1000 AND T.order_no = New.order_number AND T.sub_orderno = New.sub_order_number
+  				--		LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast WITH(NOLOCK) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+  				--		LEFT JOIN @STONEID stn ON stn.stoneid = T.stoneid
+  				--	WHERE T.stoneid = stn.stoneid
+  				--	And VendorUserMast.is_primary = 1
+  				--	AND ISNULL(T.is_stock_final,0) = 0
+  				--)As Sou On Dest.stoneid = Sou.stoneid
+  				WHEN MATCHED THEN
+  				UPDATE SET
+  					Dest.clarity_code = Sou.clarity_code,
+  					Dest.clarity_sign = Sou.clarity_sign,
+  					Dest.color_code = Sou.color_code,
+  					Dest.color_sign = Sou.color_sign,
+  					Dest.cut_code = Sou.cut_code,
+  					Dest.polish_code = Sou.polish_code,
+  					Dest.symmetry_code = Sou.symmetry_code,
+  					Dest.fluorescence_code = Sou.fluorescence_code,
+
+  					--Dest.mfg_lot_code = Sou.mfg_lot_code,
+  					--Dest.mfg_serial_number = Sou.mfg_serial_number,
+					Dest.mfg_lot_code = Sou.vendor_lot_code,
+  					Dest.mfg_serial_number = Sou.vendor_serial_no,
+
+  					Dest.clv_lot_code = Sou.clv_lot_code,
+  					Dest.clv_serial_number = Sou.clv_serial_number,
+  					Dest.clv_tag = Sou.clv_tag,
+ 					Dest.modified_datetime = @current_datetime,
+ 					Dest.modified_by =@modified_by,
+ 					Dest.modified_iplocation_id = @modified_iplocation_id,
+					Dest.apps_code =@apps_code,
+					Dest.parcel_id = Sou.parcel_id,
+					Dest.invoice_id = Sou.invoice_id,
+					Dest.rough_carat = Sou.rough_carat,
+					Dest.mines_code = Sou.mines_code,
+					Dest.mine_origin_code = Sou.mine_origin_code,
+					Dest.is_rjc=Sou.is_rjc,
+					Dest.is_bpp =Sou.is_bpp,
+					Dest.srk_invoice_id = Sou.srk_invoice_id
+  				WHEN NOT MATCHED THEN
+  				INSERT (stoneid, clarity_code, clarity_sign, color_code, color_sign, cut_code, polish_code, symmetry_code, fluorescence_code, mfg_lot_code, mfg_serial_number, 
+					clv_lot_code, clv_serial_number, clv_tag,created_datetime,created_by,created_iplocation_id,apps_code,parcel_id,invoice_id,rough_carat,mines_code,mine_origin_code
+					,is_rjc,is_bpp,srk_invoice_id)
+  				VALUES (stoneid, clarity_code, clarity_sign, color_code, color_sign, cut_code, polish_code, symmetry_code, fluorescence_code,
+				--mfg_lot_code, mfg_serial_number, 
+				vendor_lot_code, vendor_serial_no,
+				clv_lot_code, clv_serial_number, clv_tag,@current_datetime,@modified_by,@modified_iplocation_id,@apps_code,parcel_id,invoice_id,rough_carat,mines_code,mine_origin_code
+				,is_rjc,is_bpp,srk_invoice_id);
+
+
+				UPDATE dest
+				Set
+					Dest.cost_rate = vsd.cost_rate,
+					Dest.cost_percentage = vsd.cost_perercentage,
+					Dest.system_rate = vsd.system_rate,
+					Dest.system_percentage = vsd.system_percentage,
+					Dest.packet_rate = vsd.packet_rate,
+					Dest.packet_percentage = vsd.packet_percentage,
+
+					Dest.modified_datetime=@current_datetime,
+  					Dest.modified_iplocation_id = @modified_iplocation_id,
+ 					Dest.modified_by = @modified_by,
+					Dest.operational_remark = 'new stone inward update',
+
+					Dest.main_discount_cost_rate = vsd.dollar_rate,
+					Dest.main_discount_cost_percentage = vsd.dollar_percentage,
+					Dest.mfg_rate = vsd.dollar_rate,
+					Dest.mfg_percentage = vsd.dollar_percentage,
+					Dest.original_rate = vsd.original_rate,
+					Dest.original_percentage = vsd.original_percentage,
+					Dest.given_original_rate = vsd.original_rate,
+					Dest.given_original_percentage = vsd.original_percentage,
+					Dest.rapnet_market_rate = vsd.packet_base_rate,
+					Dest.upcoming_rapnet_market_rate = vsd.packet_base_rate,
+
+					Dest.additional_cost_percentage = (
+						CASE WHEN (clarity_code IN (1,100)) THEN CD1
+						WHEN (clarity_code = 2) THEN CD2
+						WHEN (clarity_code = 3) THEN CD3
+						WHEN (clarity_code = 4) THEN CD4
+						WHEN (clarity_code = 5) THEN CD5
+						WHEN (clarity_code = 6) THEN CD6
+						WHEN (clarity_code = 7) THEN CD7
+						WHEN (clarity_code = 18) THEN CD18
+						WHEN (clarity_code = 8) THEN CD8
+						WHEN (clarity_code = 9) THEN CD9
+						WHEN (clarity_code = 10) THEN CD10
+						WHEN (clarity_code = 11) THEN CD11
+						WHEN (clarity_code = 12) THEN CD12
+						WHEN (clarity_code = 13) THEN CD13
+						WHEN (clarity_code = 14) THEN CD14
+						WHEN (clarity_code = 15) THEN CD15
+						WHEN (clarity_code >= 16 AND clarity_code <> 18) THEN CD16
+						ELSE 0 END
+					),
+					Dest.account_cost_rate = vsd.original_rate, 
+					Dest.account_cost_percentage = vsd.original_percentage, 
+					Dest.account_packet_rate = vsd.original_rate, 
+					Dest.account_percentage = vsd.original_percentage,
+					Dest.is_rate_freeze = (
+						CASE 
+						WHEN order_stone.stoneid is not null THEN 1
+						ELSE 0 END
+					)
+				From #vendor_stone_details vsd
+				LEFT JOIN Packet.STONE_RATES  Dest with(nolock) on Dest.stoneid = vsd.stoneid
+				LEFT JOIN MASTER.ORIGINAL_SIZE_MASTER S WITH(NOLOCK) ON vsd.packet_carat BETWEEN S.from_size And S.to_size
+				LEFT JOIN Mat.SOL_COSTDISCMAST CMast WITH(NOLOCK) On CMast.ISZ_CODE = S.size_code
+					And CMast.C_CODE = vsd.color_code
+					And CMast.S_CODE = vsd.shape_code
+					And CMast.CT_CODE = vsd.cut_code
+					And CMast.CR_CODE = 2
+				LEFT JOIN (
+						SELECT distinct vsd.stoneid
+						FROM #vendor_stone_details vsd
+						--FROM Packet.VENDOR_STONE_DETAILS T with(nolock)
+						--INNER JOIN @STONEID stn ON stn.stoneid = T.stoneid
+						LEFT JOIN MAT.orders o with(nolock) ON vsd.order_no = o.order_number AND vsd.sub_orderno = MAT.getNumberFromAlpha(order_suffix)
+						--LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast with(nolock) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+						WHERE vsd.order_no is  not null 
+						AND vsd.sub_orderno is not null
+						AND o.order_id is not null
+						--and ISNULL(T.is_stock_final,0) = 0
+						--And VendorUserMast.is_primary = 1
+					) order_stone on order_stone.stoneid = vsd.stoneid
+  				WHERE Dest.stoneid = vsd.stoneid
+				and Dest.stoneid is not null
+
+
+				SELECT 
+					vsd.stoneid,vsd.cost_rate, cost_perercentage,vsd.system_rate,vsd.system_percentage, vsd.packet_rate,vsd.packet_percentage,
+					dollar_rate, dollar_percentage, vsd.original_rate, vsd.original_percentage, vsd.packet_base_rate rapnet_market_rate,
+					CASE WHEN (clarity_code IN (1,100)) THEN CD1
+							 WHEN (clarity_code = 2) THEN CD2
+							 WHEN (clarity_code = 3) THEN CD3
+							 WHEN (clarity_code = 4) THEN CD4
+							 WHEN (clarity_code = 5) THEN CD5
+							 WHEN (clarity_code = 6) THEN CD6
+							 WHEN (clarity_code = 7) THEN CD7
+							 WHEN (clarity_code = 18) THEN CD18
+							 WHEN (clarity_code = 8) THEN CD8
+							 WHEN (clarity_code = 9) THEN CD9
+							 WHEN (clarity_code = 10) THEN CD10
+							 WHEN (clarity_code = 11) THEN CD11
+							 WHEN (clarity_code = 12) THEN CD12
+							 WHEN (clarity_code = 13) THEN CD13
+							 WHEN (clarity_code = 14) THEN CD14
+							 WHEN (clarity_code = 15) THEN CD15
+							 WHEN (clarity_code >= 16 AND clarity_code <> 18) THEN CD16
+						ELSE 0 END additional_cost_percentage,
+						CASE 
+							WHEN order_stone.stoneid is not null THEN 1
+							ELSE 0 END as is_rate_freeze 
+				into #stone_rates
+				From #vendor_stone_details vsd
+				LEFT JOIN MASTER.ORIGINAL_SIZE_MASTER S WITH(NOLOCK) ON vsd.packet_carat BETWEEN S.from_size And S.to_size
+				LEFT JOIN Mat.SOL_COSTDISCMAST CMast WITH(NOLOCK) On CMast.ISZ_CODE = S.size_code
+					And CMast.C_CODE = vsd.color_code
+					And CMast.S_CODE = vsd.shape_code
+					And CMast.CT_CODE = vsd.cut_code
+					And CMast.CR_CODE = 2
+				LEFT JOIN (
+						SELECT distinct vsd.stoneid
+						FROM #vendor_stone_details vsd
+						--FROM Packet.VENDOR_STONE_DETAILS T with(nolock)
+						--INNER JOIN @STONEID stn ON stn.stoneid = T.stoneid
+						LEFT JOIN MAT.orders o with(nolock) ON vsd.order_no = o.order_number AND vsd.sub_orderno = MAT.getNumberFromAlpha(order_suffix)
+						--LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast with(nolock) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+						WHERE vsd.order_no is  not null 
+						AND vsd.sub_orderno is not null
+						AND o.order_id is not null
+						--and ISNULL(T.is_stock_final,0) = 0
+						--And VendorUserMast.is_primary = 1
+					) order_stone on order_stone.stoneid = vsd.stoneid
+				LEFT JOIN Packet.STONE_RATES  Dest with(nolock) on Dest.stoneid = vsd.stoneid
+  				WHERE Dest.stoneid is null
+
+
+
+				INSERT INTO Packet.STONE_RATES
+				(
+					stoneid, cost_rate, cost_percentage,system_rate,system_percentage,packet_rate, packet_percentage,operational_remark,
+					main_discount_cost_rate, main_discount_cost_percentage, mfg_rate, mfg_percentage, original_rate, original_percentage, rapnet_market_rate, upcoming_rapnet_market_rate,
+					additional_cost_percentage, account_cost_rate, account_cost_percentage, account_packet_rate, account_percentage,
+  					created_datetime,created_by,created_iplocation_id,apps_code,is_rate_freeze, given_original_rate, given_original_percentage
+				)
+
+  				SELECT 
+					vsd.stoneid,vsd.cost_rate, cost_perercentage,vsd.system_rate,vsd.system_percentage, vsd.packet_rate,vsd.packet_percentage,'new stone inward',
+					dollar_rate, dollar_percentage, dollar_rate, dollar_percentage, vsd.original_rate, vsd.original_percentage, rapnet_market_rate, rapnet_market_rate,
+					additional_cost_percentage, vsd.original_rate, vsd.original_percentage, vsd.original_rate, vsd.original_percentage,
+ 						@current_datetime,@modified_by,@modified_iplocation_id,@apps_code,
+						is_rate_freeze ,
+						vsd.original_rate,vsd.original_percentage
+				From #stone_rates vsd
+
+  	
+  		--		MERGE Into Packet.STONE_RATES As Dest
+  		--		Using(
+  		--			Select grd.stoneid, dollar_rate, dollar_percentage, 
+				--		grd.packet_base_rate rapnet_market_rate, 
+				--		packet_rate, packet_percentage, 
+				--		cost_rate , cost_perercentage, 
+				--		system_rate, system_percentage, 
+				--		order_no,
+				--		grd.original_rate,grd.original_percentage,
+
+				--		-- need addition cost from cost discount -- discussed with satishbhai to do sync costdiscmast to pure
+				--		CASE WHEN (clarity_code IN (1,100)) THEN CD1
+				--			 WHEN (clarity_code = 2) THEN CD2
+				--			 WHEN (clarity_code = 3) THEN CD3
+				--			 WHEN (clarity_code = 4) THEN CD4
+				--			 WHEN (clarity_code = 5) THEN CD5
+				--			 WHEN (clarity_code = 6) THEN CD6
+				--			 WHEN (clarity_code = 7) THEN CD7
+				--			 WHEN (clarity_code = 18) THEN CD18
+				--			 WHEN (clarity_code = 8) THEN CD8
+				--			 WHEN (clarity_code = 9) THEN CD9
+				--			 WHEN (clarity_code = 10) THEN CD10
+				--			 WHEN (clarity_code = 11) THEN CD11
+				--			 WHEN (clarity_code = 12) THEN CD12
+				--			 WHEN (clarity_code = 13) THEN CD13
+				--			 WHEN (clarity_code = 14) THEN CD14
+				--			 WHEN (clarity_code = 15) THEN CD15
+				--			 WHEN (clarity_code >= 16 AND clarity_code <> 18) THEN CD16
+				--		ELSE 0 END additional_cost_percentage,
+						
+				--		CASE 
+				--			WHEN order_stone.stoneid is not null THEN 1
+				--			ELSE 0 END as is_rate_freeze 
+  		--			From Packet.VENDOR_STONE_DETAILS grd WITH(NOLOCK)
+  		--			LEFT JOIN Master.VENDOR_USER_MASTER u WITH(NOLOCK) ON u.user_code = grd.vendor_user_code AND u.vendor_code = grd.vendor_code
+  		--			LEFT JOIN @STONEID stn ON stn.stoneid = grd.stoneid
+				--	LEFT JOIN MASTER.ORIGINAL_SIZE_MASTER S WITH(NOLOCK) ON grd.issue_carat BETWEEN S.from_size And S.to_size
+				--	LEFT JOIN Mat.SOL_COSTDISCMAST CMast WITH(NOLOCK) On CMast.ISZ_CODE = S.size_code
+				--		And CMast.C_CODE = grd.color_code
+				--		And CMast.S_CODE = grd.shape_code
+				--		And CMast.CT_CODE = grd.cut_code
+				--		And CMast.CR_CODE = 2
+				--	LEFT JOIN (
+				--			SELECT distinct T.stoneid
+				--			FROM Packet.VENDOR_STONE_DETAILS T with(nolock)
+				--			INNER JOIN @STONEID stn ON stn.stoneid = T.stoneid
+				--			LEFT JOIN MAT.orders o with(nolock) ON T.order_no = o.order_number AND T.sub_orderno = MAT.getNumberFromAlpha(order_suffix)
+				--			LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast with(nolock) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+				--			WHERE ISNULL(T.is_stock_final,0) = 0
+				--			AND T.order_no is  not null 
+				--			AND T.sub_orderno is not null
+				--			AND o.order_id is not null
+				--			And VendorUserMast.is_primary = 1
+				--		) order_stone on order_stone.stoneid = stn.stoneid
+  		--			WHERE 1=1
+  		--				AND u.is_primary = 1 And ISNULL(grd.is_stock_final,0) = 0
+ 			--			AND stn.stoneid = grd.stoneid
+  		--			)As Sou On Sou.stoneid = Dest.stoneid
+  		--		When Matched Then Update
+  		--		Set
+				--Dest.cost_rate = Sou.cost_rate,
+				--Dest.cost_percentage = Sou.cost_perercentage,
+				--Dest.system_rate = Sou.system_rate,
+				--Dest.system_percentage = Sou.system_percentage,
+				--Dest.packet_rate = Sou.packet_rate,
+				--Dest.packet_percentage = Sou.packet_percentage,
+
+				--Dest.modified_datetime=@current_datetime,
+  		--		Dest.modified_iplocation_id = @modified_iplocation_id,
+ 			--	Dest.modified_by = @modified_by,
+				--Dest.operational_remark = 'new stone inward update',
+
+				--Dest.main_discount_cost_rate = Sou.dollar_rate,
+				--Dest.main_discount_cost_percentage = Sou.dollar_percentage,
+				--Dest.mfg_rate = Sou.dollar_rate,
+				--Dest.mfg_percentage = Sou.dollar_percentage,
+				--Dest.original_rate = Sou.original_rate,
+				--Dest.original_percentage = Sou.original_percentage,
+				--Dest.given_original_rate = Sou.original_rate,
+    --            Dest.given_original_percentage = Sou.original_percentage,
+				--Dest.rapnet_market_rate = Sou.rapnet_market_rate,
+				--Dest.upcoming_rapnet_market_rate = Sou.rapnet_market_rate,
+
+				--Dest.additional_cost_percentage = Sou.additional_cost_percentage,
+				--Dest.account_cost_rate = Sou.original_rate, 
+				--Dest.account_cost_percentage = Sou.original_percentage, 
+				--Dest.account_packet_rate = Sou.original_rate, 
+				--Dest.account_percentage = Sou.original_percentage,
+				--Dest.is_rate_freeze = Sou.is_rate_freeze
+  		--		When Not Matched THEN 
+				--INSERT (stoneid, cost_rate, cost_percentage,system_rate,system_percentage,packet_rate, packet_percentage,operational_remark,
+				--	main_discount_cost_rate, main_discount_cost_percentage, mfg_rate, mfg_percentage, original_rate, original_percentage, rapnet_market_rate, upcoming_rapnet_market_rate,
+				--	additional_cost_percentage, account_cost_rate, account_cost_percentage, account_packet_rate, account_percentage,
+  		--			created_datetime,created_by,created_iplocation_id,apps_code,is_rate_freeze, given_original_rate, given_original_percentage)
+  		--		VALUES(Sou.stoneid,cost_rate, cost_perercentage,system_rate,system_percentage, packet_rate,packet_percentage,'new stone inward',
+				--	dollar_rate, dollar_percentage, dollar_rate, dollar_percentage, original_rate, original_percentage, rapnet_market_rate, rapnet_market_rate,
+				--	additional_cost_percentage, original_rate, original_percentage, original_rate, original_percentage,
+ 			--		@current_datetime,@modified_by,@modified_iplocation_id,@apps_code,Sou.is_rate_freeze,original_rate,original_percentage);			
+
+  				MERGE Into Master.LOT_MASTER As Dest
+  				Using
+				(
+  					SELECT DISTINCT vendor_lot_code
+					FROM #vendor_stone_details
+  					--FROM Packet.VENDOR_STONE_DETAILS grd WITH(NOLOCK)
+  					--LEFT JOIN Master.VENDOR_USER_MASTER u WITH(NOLOCK) ON u.user_code = grd.vendor_user_code AND u.vendor_code = grd.vendor_code
+  					--LEFT JOIN @STONEID stn ON stn.stoneid = grd.stoneid
+  					--WHERE u.is_primary = 1 And ISNULL(grd.is_stock_final,0) = 0
+  					--	AND stn.stoneid = grd.stoneid
+  				)As Sou On Sou.vendor_lot_code = Dest.LOT_CODE
+  				When Not Matched Then
+  					INSERT (LOT_CODE, LOT_DATE, IS_REGULAR,created_datetime,created_by,created_iplocation_id,apps_code)
+  					VALUES (Sou.vendor_lot_code, @current_datetime, (CASE WHEN Sou.vendor_lot_code NOT LIKE 'Z%' THEN 1 ELSE 0 END),@current_datetime,@modified_by,@modified_iplocation_id,@apps_code)
+				When Matched Then
+				UPDATE 
+  					SET Dest.IS_REGULAR = (CASE WHEN Sou.vendor_lot_code NOT LIKE 'Z%' THEN 1 ELSE 0 END),
+						Dest.modified_datetime=@current_datetime,
+						Dest.modified_by = @modified_by,
+  						Dest.modified_iplocation_id = @modified_iplocation_id,
+						Dest.apps_code = @apps_code;
+					
+					
+					-- insert or update in stone_certificate_eligible_details from vendor_stone_certificate_eligible_details
+				
+				MERGE INTO  [Packet].[STONE_CERTIFICATE_ELIGIBLE_DETAILS] AS Dest
+  				USING(
+					SELECT  VSCED.stoneid,VSCED.certificate_code,VSCED.reference_number
+						FROM #vendor_stone_details VSD WITH(NOLOCK)
+						LEFT JOIN [Packet].[VENDOR_STONE_CERTIFICATE_ELIGIBLE_DETAILS] VSCED  with(nolock) on VSCED.vendor_code = VSD.vendor_code AND VSD.stoneid = VSCED.stoneid
+						where VSCED.vendor_code = VSD.vendor_code AND VSD.stoneid = VSCED.stoneid
+  						--LEFT JOIN  Packet.VENDOR_STONE_DETAILS VSD WITH(NOLOCK) ON VSCED.vendor_code = VSD.vendor_code AND VSD.stoneid = VSCED.stoneid
+  						--LEFT JOIN Master.VENDOR_USER_MASTER u WITH(NOLOCK) ON u.user_code = VSD.vendor_user_code AND u.vendor_code = VSD.vendor_code
+						--LEFT JOIN @INWARD_MFG_Unique_Data mfg  ON  CONVERT(DATE,MFG.export_datetime) = CONVERT(DATE,VSD.vendor_exportdatetime)
+  				--		AND MFG.group_number = VSD.vendor_group_number AND VSD.vendor_lot_code = mfg.lot_code
+  						--LEFT JOIN @STONEID stn ON stn.stoneid = VSD.stoneid
+  						--WHERE u.is_primary = 1
+  						--AND ISNULL(VSD.is_stock_final,0) = 0
+  						--AND stn.stoneid = VSD.stoneid
+  				)AS Sou ON Sou.stoneid = Dest.stoneid and Dest.certificate_code = Sou.certificate_code
+  				WHEN MATCHED THEN
+  				UPDATE 
+  				SET Dest.stoneid = Sou.stoneid,
+					Dest.certificate_code = Sou.certificate_code,
+					Dest.reference_number = Sou.reference_number,
+  					Dest.modified_datetime=@current_datetime,
+					Dest.modified_by = @modified_by,
+  					Dest.modified_iplocation_id = @modified_iplocation_id,
+					Dest.apps_code = @apps_code
+  				WHEN NOT MATCHED THEN
+  					INSERT (stoneid, certificate_code,reference_number,created_by, created_iplocation_id,apps_code,created_datetime)
+  					VALUES (Sou.stoneid,Sou.certificate_code, Sou.reference_number,@modified_by,@modified_iplocation_id, @apps_code,@current_datetime);
+
+			---- order stone details added
+
+			SELECT o.order_id,vsd.stoneid, 1 as is_manufactured
+			into #mat_order_stone
+			FROM #vendor_stone_details vsd with(nolock)
+			LEFT JOIN MAT.orders o with(nolock) ON vsd.order_no = o.order_number AND vsd.sub_orderno = MAT.getNumberFromAlpha(order_suffix)
+			left join MAT.order_stone os with(nolock) on os.stoneid = vsd.stoneid and os.order_id = o.order_id
+			WHERE vsd.order_no is  not null 
+			AND vsd.sub_orderno is not null
+			AND o.order_id is not null
+			and os.stoneid is null and os.order_id is null
+
+			INSERT INTO MAT.order_stone (order_id, stoneid, is_manufactured,apps_code, created_datetime, created_by, created_iplocation_id)
+			select order_id, stoneid, is_manufactured, @apps_code, @current_datetime, @modified_by,@modified_iplocation_id
+			from #mat_order_stone
+			
+			
+				--MERGE INTO MAT.order_stone target
+				--USING(
+				--	SELECT o.order_id,vsd.stoneid, 1 as is_manufactured
+				--	FROM #vendor_stone_details vsd with(nolock)
+				--	--FROM Packet.VENDOR_STONE_DETAILS T with(nolock)
+				--	--INNER JOIN @STONEID stn ON stn.stoneid = T.stoneid
+				--	LEFT JOIN MAT.orders o with(nolock) ON vsd.order_no = o.order_number AND vsd.sub_orderno = MAT.getNumberFromAlpha(order_suffix)
+				--	--LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast with(nolock) on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+				--	WHERE vsd.order_no is  not null 
+				--	AND vsd.sub_orderno is not null
+				--	AND o.order_id is not null
+				--	--And VendorUserMast.is_primary = 1
+				--	--and ISNULL(T.is_stock_final,0) = 0
+				--)Source ON Source.stoneid = target.stoneid and Source.order_id = target.order_id
+				--WHEN NOT MATCHED BY TARGET THEN
+				--INSERT (order_id, stoneid, is_manufactured,apps_code, created_datetime, created_by, created_iplocation_id)
+				--VALUES ( Source.order_id, Source.stoneid, Source.is_manufactured , @apps_code, @current_datetime, @modified_by,@modified_iplocation_id);
+			
+			 --order stone details added
+			--insert into MAT.order_stone (order_id, stoneid, is_manufactured,apps_code, created_datetime, created_by, created_iplocation_id)
+
+			--SELECT o.order_id,T.stoneid, 1 as is_manufactured, @apps_code, @current_datetime, @modified_by,@modified_iplocation_id
+			--		FROM Packet.VENDOR_STONE_DETAILS T  with(nolock) 
+			--		INNER JOIN @STONEID stn ON stn.stoneid = T.stoneid
+			--		LEFT JOIN MAT.orders O WITH(NOLOCK) ON T.order_no = o.order_number AND T.sub_orderno = MAT.getNumberFromAlpha(order_suffix)
+			--		--LEFT JOIN (
+			--		--		   	  select order_id,order_number, MAT.getNumberFromAlpha(order_suffix)sub_orderno 
+			--		--			  FROM MAT.orders  with(nolock) 
+			--		--		  ) AS o ON T.order_no = o.order_number AND T.sub_orderno = o.sub_orderno
+			--		LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast  with(nolock)  on VendorUserMast.user_code = T.vendor_user_code And T.vendor_code = VendorUserMast.vendor_code
+			--		WHERE ISNULL(T.is_stock_final,0) = 0
+			--		AND T.order_no is  not null 
+			--		AND T.sub_orderno is not null
+			--		AND o.order_id is not null
+			--		And VendorUserMast.is_primary = 1
+			--		and not exists (select 'Y' from MAT.order_stone os WITH(NOLOCK) where os.stoneid = t.stoneid and os.order_id = o.order_id)
+
+				--exec Stock.usp_InwardMfg_Certificate_Change_Save @stoneid, @modified_by, @modified_iplocation_id,@apps_code,@current_datetime
+
+				UPDATE dest
+				Set Dest.shape_code = vsd.shape_code,
+  					Dest.issue_carat = vsd.packet_carat,
+  					Dest.clarity_code = vsd.clarity_code,
+  					Dest.lab_clarity_sign = vsd.clarity_sign,
+  					Dest.color_code = vsd.color_code,
+  					Dest.color_sign = vsd.color_sign,
+  					Dest.certificate_number = vsd.certificate_no,
+  					Dest.cut_code = vsd.cut_code,
+  					Dest.polish_code = vsd.polish_code,
+  					Dest.symmetry_code = vsd.symmetry_code,
+  					Dest.fluorescence_code = vsd.fluorescence_code,
+
+  					Dest.is_eye_clean = vsd.is_eye_clean,
+  					--Dest.location_code = Sou.location_code,
+  					Dest.diameter_ratio = (
+						CASE WHEN(vsd.shape_code = @shape_code_rbc) THEN ((vsd.diameter_length + vsd.diameter_width)/2) 
+						ELSE (CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) ELSE (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END / 
+								CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) ELSE (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END) END
+					),
+  					Dest.diameter_length = (
+						CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,',')))
+							THEN (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END)
+							ELSE (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END
+					),
+  					Dest.diameter_width = (
+						CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,',')))
+							THEN (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) 
+							ELSE (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END
+					),
+  					Dest.total_depth = vsd.total_depth,
+  					Dest.tabled = vsd.tabled,
+  					Dest.height = vsd.height,
+  					Dest.measurement = vsd.measurement,
+  					Dest.crown_angle = vsd.crown_angle,
+					Dest.crown_height = vsd.crown_height,
+
+  					Dest.pavilion_angle = vsd.pavalion_angle,
+  					Dest.pavilion_height = vsd.pavalion_height,
+  					Dest.star_length = vsd.star_length,
+  					Dest.lower_half = vsd.lower_half,
+  					Dest.girdle = vsd.girdle,
+  					Dest.from_girdle_code = vsd.from_girdle_code,
+  					Dest.to_girdle_code = vsd.to_girdle_code,
+  					--Dest.control_number = Sou.lab_control_no,
+
+  					Dest.modified_datetime = @current_datetime,
+  					Dest.modified_iplocation_id = @modified_iplocation_id,
+					Dest.apps_code = @apps_code,
+ 					Dest.modified_by = @modified_by,
+  					Dest.remark = vsd.remark,
+					Dest.stone_department_code = dept.department_code 
+				From #vendor_stone_details vsd
+				LEFT JOIN Packet.STONE_LAB_MASTER dest with(nolock) on dest.stoneid = vsd.stoneid
+				LEFT JOIN Master.STONE_DEPARTMENT_MASTER dept  with(nolock) ON vsd.packet_carat BETWEEN dept.from_size AND dept.to_size
+					AND dept.size_type_key = 'LABEXP'
+					AND vsd.color_code BETWEEN dept.from_color_code AND dept.to_color_code
+  				Where Dest.stoneid = vsd.stoneid
+				and Dest.stoneid is not null
+
+				SELECT
+ 					vsd.stoneid, vsd.shape_code, vsd.packet_carat, vsd.clarity_code, vsd.clarity_sign, vsd.color_code, vsd.color_sign,
+ 					vsd.certificate_no, vsd.cut_code,
+ 					vsd.polish_code, vsd.symmetry_code, vsd.fluorescence_code, vsd.is_eye_clean, 
+					(
+						CASE WHEN(vsd.shape_code = @shape_code_rbc) THEN ((vsd.diameter_length + vsd.diameter_width)/2) 
+						ELSE (CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) ELSE (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END / 
+								CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) ELSE (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END) END
+					) as diameter_ratio,
+					(
+						CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,',')))
+							THEN (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END)
+							ELSE (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END
+					) as diameter_length, 
+					(
+						CASE WHEN(vsd.shape_code in(SELECT value FROM string_split(@shape_code,',')))
+							THEN (CASE WHEN vsd.diameter_length > vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) 
+							ELSE (CASE WHEN vsd.diameter_length < vsd.diameter_width THEN vsd.diameter_length ELSE vsd.diameter_width END) END
+					) as diameter_width,
+					vsd.total_depth,
+  					vsd.tabled, vsd.height, vsd.measurement, vsd.crown_angle, vsd.pavalion_angle, vsd.pavalion_height,
+ 					vsd.star_length, vsd.lower_half, vsd.girdle, vsd.from_girdle_code, vsd.to_girdle_code, vsd.remark,
+ 					vsd.crown_height, dept.department_code
+				into #stone_lab_master
+ 				From #vendor_stone_details vsd
+				LEFT JOIN Master.STONE_DEPARTMENT_MASTER dept  with(nolock) ON vsd.packet_carat BETWEEN dept.from_size AND dept.to_size
+					AND dept.size_type_key = 'LABEXP'
+					AND vsd.color_code BETWEEN dept.from_color_code AND dept.to_color_code
+				LEFT JOIN Packet.STONE_LAB_MASTER dest with(nolock) on dest.stoneid = vsd.stoneid
+  				Where Dest.stoneid is null
+
+
+				INSERT Into Packet.STONE_LAB_MASTER
+ 				(
+ 					stoneid, certificate_code ,shape_code ,issue_carat  ,clarity_code ,lab_clarity_sign ,color_code ,color_sign ,
+ 					certificate_number ,cut_code ,polish_code ,symmetry_code ,fluorescence_code ,is_eye_clean,diameter_ratio,
+ 					diameter_length, diameter_width,total_depth,tabled,height,measurement,crown_angle,pavilion_angle,pavilion_height,
+ 					star_length,lower_half,girdle,from_girdle_code,to_girdle_code,remark,created_datetime,created_by,created_iplocation_id,apps_code,
+					crown_height, stone_department_code
+ 				)
+  				SELECT
+ 					vsd.stoneid, @srk_certificate, vsd.shape_code, vsd.packet_carat, vsd.clarity_code, vsd.clarity_sign, vsd.color_code, vsd.color_sign,
+ 					vsd.certificate_no, vsd.cut_code,
+ 					vsd.polish_code, vsd.symmetry_code, vsd.fluorescence_code, vsd.is_eye_clean, 
+					diameter_ratio
+					, vsd.diameter_length, vsd.diameter_width, vsd.total_depth,
+  					vsd.tabled, vsd.height, vsd.measurement, vsd.crown_angle, vsd.pavalion_angle, vsd.pavalion_height,
+ 					vsd.star_length, vsd.lower_half, vsd.girdle, vsd.from_girdle_code, vsd.to_girdle_code, vsd.remark,
+ 					@current_datetime,@modified_by,@modified_iplocation_id,@apps_code, vsd.crown_height, vsd.department_code
+ 				From #stone_lab_master vsd
+
+
+				--Merge Into Packet.STONE_LAB_MASTER As Dest
+  		--		Using(
+  		--			Select grd.stoneid, @srk_certificate certificate_code, shape_code, issue_carat,grd.clarity_code, grd.clarity_sign, grd.color_code, grd.color_sign, certificate_no,
+ 			--			cut_code,polish_code,symmetry_code,fluorescence_code,grd.is_eye_clean, 
+  		--				grd.total_depth, grd.tabled,grd.height, grd.measurement, grd.crown_angle, grd.crown_height,grd.pavalion_angle,grd.pavalion_height, grd.star_length,
+  		--				grd.lower_half,grd.girdle, grd.from_girdle_code, grd.to_girdle_code, lab_control_no,	1 is_lab_active, remark,
+				--		dept.department_code,
+				--		CASE WHEN(grd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN grd.diameter_length < grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) ELSE (CASE WHEN grd.diameter_length > grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) END AS diameter_length,
+				--		CASE WHEN(grd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN grd.diameter_length > grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) ELSE (CASE WHEN grd.diameter_length < grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) END AS diameter_width,
+				--		CASE WHEN(grd.shape_code = @shape_code_rbc) THEN ((grd.diameter_length + grd.diameter_width)/2) 
+				--				ELSE (CASE WHEN(grd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN grd.diameter_length < grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) ELSE (CASE WHEN grd.diameter_length > grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) END / 
+				--					  CASE WHEN(grd.shape_code in(SELECT value FROM string_split(@shape_code,','))) THEN (CASE WHEN grd.diameter_length > grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) ELSE (CASE WHEN grd.diameter_length < grd.diameter_width THEN grd.diameter_length ELSE grd.diameter_width END) END) END AS diameter_ratio
+  		--			From Packet.VENDOR_STONE_DETAILS grd with(nolock)
+  		--				LEFT JOIN Master.VENDOR_USER_MASTER u  with(nolock) ON u.user_code = grd.vendor_user_code AND u.vendor_code = grd.vendor_code
+  		--				LEFT JOIN @STONEID stn ON stn.stoneid = grd.stoneid
+				--		LEFT JOIN Master.STONE_DEPARTMENT_MASTER dept  with(nolock) ON grd.issue_carat BETWEEN dept.from_size AND dept.to_size
+				--																	  AND dept.size_type_key = 'LABEXP'
+				--																	  AND grd.color_code BETWEEN dept.from_color_code AND dept.to_color_code
+  		--			Where 1=1
+  		--				AND stn.stoneid = grd.stoneid
+  		--				And u.is_primary = 1 
+				--		And ISNULL(grd.is_stock_final,0) = 0
+  		--			)As Sou On Dest.STONEID = Sou.STONEID And Dest.certificate_code = Sou.certificate_code
+  		--		When Matched Then
+  		--		Update
+  		--		Set Dest.shape_code = Sou.shape_code,
+  		--			Dest.issue_carat = Sou.issue_carat,
+  		--			Dest.clarity_code = Sou.clarity_code,
+  		--			Dest.lab_clarity_sign = Sou.clarity_sign,
+  		--			Dest.color_code = Sou.color_code,
+  		--			Dest.color_sign = Sou.color_sign,
+  		--			Dest.certificate_number = Sou.certificate_no,
+  		--			Dest.cut_code = Sou.cut_code,
+  		--			Dest.polish_code = Sou.polish_code,
+  		--			Dest.symmetry_code = Sou.symmetry_code,
+  		--			Dest.fluorescence_code = Sou.fluorescence_code,
+
+  		--			Dest.is_eye_clean = Sou.is_eye_clean,
+  		--			--Dest.location_code = Sou.location_code,
+  		--			Dest.diameter_ratio = Sou.diameter_ratio,
+  		--			Dest.diameter_length = Sou.diameter_length,
+  		--			Dest.diameter_width = Sou.diameter_width,
+  		--			Dest.total_depth = Sou.total_depth,
+  		--			Dest.tabled = Sou.tabled,
+  		--			Dest.height = Sou.height,
+  		--			Dest.measurement = Sou.measurement,
+  		--			Dest.crown_angle = Sou.crown_angle,
+				--	Dest.crown_height = Sou.crown_height,
+
+  		--			Dest.pavilion_angle = Sou.pavalion_angle,
+  		--			Dest.pavilion_height = Sou.pavalion_height,
+  		--			Dest.star_length = Sou.star_length,
+  		--			Dest.lower_half = Sou.lower_half,
+  		--			Dest.girdle = Sou.girdle,
+  		--			Dest.from_girdle_code = Sou.from_girdle_code,
+  		--			Dest.to_girdle_code = Sou.to_girdle_code,
+  		--			--Dest.control_number = Sou.lab_control_no,
+
+  		--			Dest.modified_datetime = @current_datetime,
+  		--			Dest.modified_iplocation_id = @modified_iplocation_id,
+				--	Dest.apps_code = @apps_code,
+ 			--		Dest.modified_by = @modified_by,
+  		--			Dest.remark = Sou.remark,
+				--	Dest.stone_department_code = Sou.department_code 
+  		--		When Not Matched Then
+  		--		INSERT
+ 			--	(
+ 			--		stoneid, certificate_code ,shape_code ,issue_carat  ,clarity_code ,lab_clarity_sign ,color_code ,color_sign ,
+ 			--		certificate_number ,cut_code ,polish_code ,symmetry_code ,fluorescence_code ,is_eye_clean,diameter_ratio,
+ 			--		diameter_length, diameter_width,total_depth,tabled,height,measurement,crown_angle,pavilion_angle,pavilion_height,
+ 			--		star_length,lower_half,girdle,from_girdle_code,to_girdle_code,remark,created_datetime,created_by,created_iplocation_id,apps_code,
+				--	crown_height, stone_department_code
+ 			--	)
+  		--		VALUES
+ 			--	(
+ 			--		stoneid, certificate_code, shape_code, issue_carat, clarity_code,clarity_sign,color_code,color_sign,
+ 			--		certificate_no, cut_code,
+ 			--		polish_code, symmetry_code,fluorescence_code,is_eye_clean,diameter_ratio,diameter_length, diameter_width,total_depth,
+  		--			tabled,height,measurement,crown_angle,Sou.pavalion_angle,Sou.pavalion_height,
+ 			--		star_length,lower_half,girdle,from_girdle_code,to_girdle_code,remark,
+ 			--		@current_datetime,@modified_by,@modified_iplocation_id,@apps_code,crown_height, department_code
+ 			--	);
+
+				UPDATE dest 
+				SET
+ 					Dest.inclusion_visibility_code = grd.inclusion_visibility_code,
+ 					Dest.inclusion_location_code = grd.inclusion_location_code,
+ 					Dest.inclusion_percentage = grd.inclusion_percentage,
+ 					Dest.inclusion_visibility_percentage = grd.inclusion_visibility_percentage,
+ 					Dest.inclusion_location_percentage = grd.inclusion_location_percentage
+				From #vendor_stone_details vsd
+				LEFT JOIN  Packet.VENDOR_STONE_INCLUSIONS grd  with(nolock) on grd.stoneid = vsd.stoneid AND grd.certificate_code = vsd.vsd_certificate_code AND grd.vendor_user_code = vsd.vendor_user_code 
+  				LEFT JOIN Packet.STONE_LAB_INCLUSIONS dest with(nolock) on dest.stoneid = vsd.stoneid 
+					And Dest.certificate_code = @srk_certificate
+ 					AND Dest.inclusion_type_code = grd.inclusion_type_code
+					AND Dest.inclusion_sequence_code = grd.inclusion_sequence_code
+ 					AND Dest.inclusion_code = grd.inclusion_code
+				WHERE Dest.stoneid = grd.stoneid
+				and dest.stoneid is not null
+
+				SELECT
+					grd.stoneid, grd.inclusion_type_code, grd.inclusion_sequence_code, grd.inclusion_code, grd.inclusion_visibility_code, grd.inclusion_location_code,
+ 					grd.inclusion_percentage, grd.inclusion_visibility_percentage, grd.inclusion_location_percentage
+				into #stone_lab_inc
+				From #vendor_stone_details vsd
+				LEFT JOIN  Packet.VENDOR_STONE_INCLUSIONS grd  with(nolock) on grd.stoneid = vsd.stoneid AND grd.certificate_code = vsd.vsd_certificate_code AND grd.vendor_user_code = vsd.vendor_user_code 
+  				LEFT JOIN Packet.STONE_LAB_INCLUSIONS dest with(nolock) on dest.stoneid = vsd.stoneid 
+					And Dest.certificate_code = @srk_certificate
+ 					AND Dest.inclusion_type_code = grd.inclusion_type_code
+					AND Dest.inclusion_sequence_code = grd.inclusion_sequence_code
+ 					AND Dest.inclusion_code = grd.inclusion_code
+				WHERE dest.inclusion_type_code IS NULL or dest.stoneid is null
+
+				
+				INSERT INTO Packet.STONE_LAB_INCLUSIONS
+				(
+ 					stoneid, certificate_code, inclusion_type_code, inclusion_sequence_code, inclusion_code, inclusion_visibility_code, inclusion_location_code,
+ 					created_datetime, created_by, created_iplocation_id,apps_code,
+ 					inclusion_percentage, inclusion_visibility_percentage, inclusion_location_percentage
+				)
+ 				SELECT
+					grd.stoneid, @srk_certificate, grd.inclusion_type_code, grd.inclusion_sequence_code, grd.inclusion_code, grd.inclusion_visibility_code, grd.inclusion_location_code,
+ 					@current_datetime, @modified_by, @modified_iplocation_id,@apps_code,
+ 					grd.inclusion_percentage, grd.inclusion_visibility_percentage, grd.inclusion_location_percentage
+				From #stone_lab_inc grd
+
+
+ 				--Merge Into Packet.STONE_LAB_INCLUSIONS As Dest
+  			--	Using(
+  			--		Select grd.stoneid, grd.vendor_user_code, @srk_certificate certificate_code, grd.inclusion_type_code, grd.inclusion_sequence_code,
+					--	grd.inclusion_code, grd.inclusion_visibility_code, grd.inclusion_location_code,
+ 				--	   inclusion_percentage, inclusion_visibility_percentage, inclusion_location_percentage
+  			--		From Packet.VENDOR_STONE_INCLUSIONS grd  with(nolock)
+ 				--	LEFT JOIN Packet.VENDOR_STONE_DETAILS Vdet  with(nolock) ON grd.stoneid = Vdet.stoneid AND grd.certificate_code = Vdet.certificate_code
+ 				--		AND grd.vendor_user_code = Vdet.vendor_user_code
+  			--		LEFT JOIN Master.VENDOR_USER_MASTER u  with(nolock) ON u.user_code = grd.vendor_user_code AND u.vendor_code = Vdet.vendor_code
+  			--		LEFT JOIN @STONEID stn ON stn.stoneid = grd.stoneid
+  			--		Where 1=1
+  			--			AND stn.stoneid = grd.stoneid
+  			--			And u.is_primary = 1 And ISNULL(Vdet.is_stock_final,0) = 0
+  			--		)As Sou On Dest.STONEID = Sou.STONEID And Dest.certificate_code = Sou.certificate_code
+ 				--		AND Dest.inclusion_type_code = Sou.inclusion_type_code AND Dest.inclusion_sequence_code = Sou.inclusion_sequence_code
+ 				--		AND Dest.inclusion_code = Sou.inclusion_code
+  			--	When Matched THEN UPDATE SET
+ 				--Dest.inclusion_visibility_code = Sou.inclusion_visibility_code,
+ 				--Dest.inclusion_location_code = Sou.inclusion_location_code,
+ 				--Dest.inclusion_percentage = Sou.inclusion_percentage,
+ 				--Dest.inclusion_visibility_percentage = Sou.inclusion_visibility_percentage,
+ 				--Dest.inclusion_location_percentage = Sou.inclusion_location_percentage
+ 				--WHEN NOT MATCHED THEN INSERT (
+ 				--stoneid, certificate_code, inclusion_type_code, inclusion_sequence_code, inclusion_code, inclusion_visibility_code, inclusion_location_code,
+ 				--created_datetime, created_by, created_iplocation_id,apps_code,
+ 				--inclusion_percentage, inclusion_visibility_percentage, inclusion_location_percentage)
+ 				--VALUES (stoneid, certificate_code, inclusion_type_code, inclusion_sequence_code, inclusion_code, inclusion_visibility_code, inclusion_location_code,
+ 				--@current_datetime, @modified_by, @modified_iplocation_id,@apps_code,
+ 				--inclusion_percentage, inclusion_visibility_percentage, inclusion_location_percentage);
+	
+				Merge Into Packet.STONE_LAB_REMARKS As Dest
+  					Using(
+  						select stoneid,remark mfg_remark 
+						FROM #vendor_stone_details
+  						--From Packet.VENDOR_STONE_DETAILS grd with(nolock)
+  						--LEFT JOIN Master.VENDOR_USER_MASTER u  with(nolock) ON u.user_code = grd.vendor_user_code AND u.vendor_code = grd.vendor_code
+  						--LEFT JOIN @STONEID stn ON stn.stoneid = grd.stoneid
+  						Where isnull(remark,'') <> ''
+							--and stn.stoneid = grd.stoneid
+  					--		And u.is_primary = 1
+  					--		And ISNULL(grd.is_stock_final,0) = 0
+  					)As Sou On Dest.stoneid = Sou.stoneid
+  					When Matched THEN
+  					Update
+  					Set Dest.source_type_code = @REMARK_TYPE_CODE,
+  						Dest.certificate_code = @srk_certificate,
+ 						Dest.stone_remark = Sou.mfg_remark,
+						Dest.is_active = 1,
+						Dest.modified_datetime = @current_datetime,
+  						Dest.modified_iplocation_id = @modified_iplocation_id,
+						Dest.apps_code = @apps_code,
+ 						Dest.modified_by = @modified_by
+  					When Not Matched Then
+					INSERT
+ 					(
+ 						stoneid, certificate_code, source_type_code, stone_remark, is_active,
+						created_datetime, created_by, created_iplocation_id,apps_code
+ 					)
+  					VALUES
+ 					(
+ 						stoneid, @srk_certificate, @REMARK_TYPE_CODE, mfg_remark, 1,
+						@current_datetime, @modified_by, @modified_iplocation_id,@apps_code
+ 					);
+
+				
+				--========================if stone have eye clean then data saved on inclusion
+				
+				 INSERT INTO Packet.STONE_LAB_INCLUSIONS
+				 (
+ 					stoneid, certificate_code, inclusion_type_code, inclusion_sequence_code, inclusion_code,
+ 					created_datetime, created_by, created_iplocation_id,apps_code
+				)
+ 				select comment.stoneid,@srk_certificate certificate_code,@iclean_inc_type_code,0,@iclean_inc_code,
+				@current_datetime, @modified_by, @modified_iplocation_id,@apps_code 
+				from packet.VENDOR_STONE_LAB_COMMENTS comment WITH(NOLOCK)
+				LEFT JOIN #vendor_stone_details stn WITH(NOLOCK) on stn.stoneid = comment.stoneid and stn.vendor_user_code = comment.vendor_user_code
+  				left join master.STONE_COMMENT_MASTER s with(nolock) on s.comment_id = comment.comment_id
+				where stn.stoneid = comment.stoneid and stn.vendor_user_code = comment.vendor_user_code
+				and comment.comment_id = @ec_comment_code
+				--========================comment added============
+
+				MERGE INTO Packet.STONE_LAB_COMMENTS dest
+				USING(
+					SELECT distinct comment.stoneid,@srk_certificate certificate_code, mfg.comment_id,mfg.comment_name, 
+						convert(bigint,ROW_NUMBER() OVER (partition by comment.stoneid,mfg.comment_type_key order by comment.stoneid,mfg.comment_type_key))  display_order,
+						mfg.comment_type_key
+					FROM packet.VENDOR_STONE_LAB_COMMENTS comment WITH(NOLOCK)
+					LEFT JOIN #vendor_stone_details stn WITH(NOLOCK) on stn.stoneid = comment.stoneid and stn.vendor_user_code = comment.vendor_user_code
+  					--LEFT JOIN @STONEID stn ON stn.stoneid = comment.stoneid
+					left JOIN master.stone_comment_master SLCOM WITH(NOLOCK)  ON SLCOM.comment_id = comment.comment_id
+					left join 
+					(
+						select comment_name,comment_type_key,comment_id, certificate_code from Master.STONE_COMMENT_MASTER with(nolock)
+						where comment_type_key in ('sgs_comment','mfg_lab_comment')
+						and certificate_code =  @srk_certificate
+					)as mfg on mfg.comment_name = SLCOM.comment_name and mfg.certificate_code = SLCOM.certificate_code
+					--WHERE is_primary = 1
+					where stn.stoneid = comment.stoneid
+					and stn.vendor_user_code = comment.vendor_user_code
+				) sou ON dest.stoneid = sou.stoneid AND dest.comment_id = sou.comment_id AND dest.certificate_code = sou.certificate_code
+				--WHEN MATCHED AND (dest.is_active = 0 OR dest.is_active IS NULL) THEN
+				WHEN MATCHED THEN
+				UPDATE SET
+					dest.is_active = 1,
+					dest.modified_datetime = @current_datetime,
+					dest.modified_by = @modified_by,
+					dest.modified_iplocation_id = @modified_iplocation_id,
+					dest.apps_code = @apps_code,
+					dest.display_order = sou.display_order
+				WHEN NOT MATCHED BY TARGET THEN
+				INSERT(stoneid, certificate_code, comment_id, created_datetime, created_by, created_iplocation_id, apps_code, is_active,display_order)
+				VALUES(sou.stoneid, certificate_code, sou.comment_id, @current_datetime, @modified_by, @modified_iplocation_id, @apps_code, 1,display_order);
+
+				--drop table if exists #myTable
+
+				--create table #myTable (stoneid varchar(max),comment_name varchar(max))
+
+				--insert into #myTable (stoneid,comment_name) 
+				--select stoneid,'MILKY STONE' comment_name from Packet.VENDOR_STONE_INCLUSIONS
+				--where inclusion_code in (select value from string_split(@milky_stone_comment,','))
+				--and vendor_user_code=1 and stoneid in (select * from @STONEID)
+				--union all
+				--select stoneid,'RED SPOT' comment_name from Packet.VENDOR_STONE_INCLUSIONS
+				--where inclusion_code in (select value from string_split(@red_spot_comment,','))
+				--and vendor_user_code=1 and stoneid in (select * from @STONEID)
+				--union all
+				--select stoneid,'GREEN SPOT' comment_name from Packet.VENDOR_STONE_INCLUSIONS
+				--where inclusion_code in (select value from string_split(@green_spot_comment,','))
+				--and vendor_user_code=1 and stoneid in (select * from @STONEID)
+
+				--insert into Packet.STONE_LAB_COMMENTS (stoneid, certificate_code, scm.comment_id,apps_code, created_datetime, created_by, created_iplocation_id, is_active,display_order)
+				--select my.stoneid, 1, scm.comment_id,@apps_code,@current_datetime,@modified_by,@modified_iplocation_id,1					
+				--,(case when slc.stoneid is not null and scm.comment_type_key in (select comment_type_key from master.STONE_COMMENT_MASTER where comment_name = my.comment_name)  then 
+				--(select max(display_order) from packet.STONE_LAB_COMMENTS where stoneid = my.stoneid and 
+				--  scm.comment_type_key in (select comment_type_key from master.STONE_COMMENT_MASTER where comment_name = my.comment_name)) +1
+				--else
+				--convert(bigint,ROW_NUMBER() OVER (partition by slc.stoneid,scm.comment_type_key order by my.stoneid)) 
+				--end) display_order
+				--from #myTable my WITH(NOLOCK)
+				--left join master.STONE_COMMENT_MASTER scm WITH(NOLOCK) on scm.comment_name = my.comment_name and scm.certificate_code = 0 
+				--left join Packet.STONE_LAB_COMMENTS slc WITH(NOLOCK) on slc.stoneid = my.stoneid
+				--   where my.stoneid not in (select case when isnull(s.stoneid,0)=0 then 0 else s.stoneid end --l.stoneid,fluorescence_color,lab_comment_id
+				--				from #myTable my 
+				--				left join Packet.STONE_LAB_COMMENTS s with(nolock) on s.stoneid = my.stoneid and s.certificate_code = 8
+				--				left join master.STONE_COMMENT_MASTER c with(nolock) on c.comment_id = s.comment_id)
+
+
+				------------------SGS MFG Comments(MILKY STONE,RED SPOT,GREEN SPOT) as per the Inclusions at time of Stock Inward-----------------------
+
+				
+				create table #myTable (stoneid bigint,comment_name varchar(max))
+
+				insert into #myTable (stoneid,comment_name) 
+				select stoneid,'MILKY STONE' comment_name
+				from Packet.VENDOR_STONE_INCLUSIONS  vsi with(nolock)
+				--left join Packet.VENDOR_STONE_DETAILS T WITH(NOLOCK) on T.stoneid = vsi.stoneid
+  				LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast WITH(NOLOCK) on VendorUserMast.user_code = vsi.vendor_user_code 
+				where inclusion_code in (select value from string_split(@milky_stone_comment,','))
+					--and vendor_user_code = 1 
+					and VendorUserMast.is_primary = 1
+					and stoneid in (select stoneid from @STONEID)
+				union all
+					select stoneid,'RED SPOT' comment_name 
+					from Packet.VENDOR_STONE_INCLUSIONS vsi with(nolock)
+					LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast WITH(NOLOCK) on VendorUserMast.user_code = vsi.vendor_user_code
+					where inclusion_code in (select value from string_split(@red_spot_comment,','))
+						--and vendor_user_code = 1 
+						and VendorUserMast.is_primary = 1
+						and vsi.stoneid in (select stoneid from @STONEID)
+				union all
+					select stoneid,'GREEN SPOT' comment_name 
+					from Packet.VENDOR_STONE_INCLUSIONS vsi with(nolock)
+					LEFT JOIN Master.VENDOR_USER_MASTER VendorUserMast WITH(NOLOCK) on VendorUserMast.user_code = vsi.vendor_user_code
+					where inclusion_code in (select value from string_split(@green_spot_comment,','))
+						--and vendor_user_code = 1
+						and VendorUserMast.is_primary = 1
+						and stoneid in (select stoneid from @STONEID)
+				
+				select scm.comment_id,lab_comment_id,stoneid,scm.comment_type_key,isnull(slc.display_order,0) display_order
+				,scm.comment_name
+				into #main_comm
+				from Packet.STONE_LAB_COMMENTS slc with(nolock)
+				left join master.STONE_COMMENT_MASTER scm with(nolock) on scm.comment_id = slc.comment_id 
+				where stoneid in (select stoneid from @STONEID)
+				and slc.certificate_code = @srk_certificate
+	            
+				insert into Packet.STONE_LAB_COMMENTS (stoneid, certificate_code, scm.comment_id,apps_code, created_datetime, created_by, created_iplocation_id, is_active,display_order)
+				select my.stoneid,@srk_certificate,scm.comment_id,@apps_code,@current_datetime,@modified_by,@modified_iplocation_id,1,
+					isnull(d.display_order,0) + convert(bigint,ROW_NUMBER() OVER (partition by my.stoneid,scm.comment_type_key order by my.stoneid,scm.comment_name desc)) display_order
+				from #myTable my
+				left join master.STONE_COMMENT_MASTER scm with(nolock) on
+						scm.comment_name = my.comment_name
+						and scm.certificate_code = @srk_certificate
+				left join #main_comm slc with(nolock) on slc.comment_id = scm.comment_id and slc.stoneid = my.stoneid
+				--from (
+				--	select scm.comment_id,lab_comment_id,my.stoneid,scm.comment_type_key,scm.comment_name
+				--	from  #myTable my with(nolock)
+				--	left join master.STONE_COMMENT_MASTER scm with(nolock) on
+				--		scm.comment_name = my.comment_name
+				--		and scm.certificate_code = @srk_certificate
+				--	left join #main_comm slc with(nolock) on slc.comment_id = scm.comment_id and slc.stoneid = my.stoneid
+				--	where slc.stoneid is null
+				--)as a
+				left join 
+				(
+					select stoneid, comment_type_key,max(display_order) display_order 
+					from #main_comm with(nolock)
+					group by stoneid,comment_type_key
+				)as d on d.comment_type_key = scm.comment_type_key and d.stoneid = my.stoneid
+				where slc.comment_id is null
+
+				begin try
+				BEGIN TRANSACTION t1
+					
+					--===============================update bgm flag==========================
+					update sd
+					set sd.is_no_bgm_active = (case when Tinc_Code = @tinge_inc_code and Linc_Code = @luster_inc_code then 1 else 0 end)
+					from @STONEID stn
+					LEFT JOIN packet.stone_details sd with(nolock)  ON stn.stoneid = sd.stoneid
+					LEFT JOIN Packet.stone_lab_inclusion_pivoted inc with(nolock) on inc.stoneid = sd.stoneid and inc.certificate_code = sd.certificate_code
+					where stn.stoneid = sd.stoneid
+
+
+
+  					Update  ven Set
+ 						ven.is_stock_inward = 1,
+ 						ven.inward_datetime = @current_datetime,
+ 						ven.is_grading_verify = 1,
+ 						ven.modified_datetime = @current_datetime,
+ 						ven.modified_by = @modified_by,
+ 						ven.modified_iplocation_id = @modified_iplocation_id,
+						ven.apps_code = @apps_code
+  					FROM Packet.VENDOR_STONE_DETAILS ven with (rowlock)
+  					LEFT JOIN @STONEID stn ON stn.stoneid = ven.stoneid
+  					WHERE ISNULL(is_stock_inward,0) = 0
+  						AND ISNULL(is_stock_final,0) = 0
+  						AND stn.stoneid = ven.stoneid
+  					-- this update must be after TRNGRDMAST update flag ISSTOCKINWARD
+  					MERGE INTO Stock.VENDOR_STOCK_SUMMARY AS Dest
+  						USING(
+  							SELECT T.vendor_group_number, CONVERT(DATE,@current_datetime) inward_date, T.vendor_lot_code, 1 vendor_code,COUNT(T.stoneid) pcs,
+  								SUM(T.issue_carat) carat,dept.department_code
+  							FROM Packet.VENDOR_STONE_DETAILS T with(nolock)
+  							LEFT JOIN Master.VENDOR_USER_MASTER u with(nolock) ON u.user_code = T.vendor_user_code AND u.vendor_code = T.vendor_code
+  							LEFT JOIN Master.STONE_DEPARTMENT_MASTER dept with(nolock) ON size_type_key = 'LABEXP' AND dept.department_date = @department_date and T.issue_carat between dept.from_size and dept.to_size
+ 									and T.color_code between dept.from_color_code and dept.to_color_code
+							LEFT JOIN Stock.VENDOR_STOCK_SUMMARY N with(nolock) ON CONVERT(DATE,T.inward_datetime) = N.inward_date AND T.vendor_lot_code = N.lot_code AND T.vendor_group_number = N.vendor_group_number
+									and N.department_code = dept.department_code
+  							LEFT JOIN @INWARD_MFG_Unique_Data mfg ON  CONVERT(DATE,MFG.export_datetime) = CONVERT(DATE,t.vendor_exportdatetime)
+  								AND MFG.group_number = T.vendor_group_number AND T.vendor_lot_code = mfg.lot_code
+  							WHERE u.is_primary = 1
+  								AND T.vendor_lot_code NOT LIKE 'Z%'
+  								AND ISNULL(N.is_cbc_transfer,0) = 0
+  								AND T.is_stock_inward = 1
+  								AND CONVERT(DATE,MFG.export_datetime) = CONVERT(DATE,t.vendor_exportdatetime)
+  								AND T.vendor_group_number = mfg.group_number
+  								AND T.vendor_lot_code = mfg.lot_code
+  							GROUP BY T.vendor_group_number, T.vendor_lot_code, dept.department_code
+  						)AS Sou ON Sou.vendor_group_number = Dest.vendor_group_number
+  							AND Sou.inward_date = Dest.inward_date
+  							AND Sou.vendor_lot_code = Dest.lot_code
+ 							And Sou.vendor_code = Dest.vendor_code
+ 							And Sou.department_code = Dest.department_code
+
+  						WHEN MATCHED THEN
+  						UPDATE 
+  						SET Dest.department_code = Sou.department_code,
+  							Dest.vendor_code = Sou.vendor_code,
+  							Dest.issue_pcs = Sou.pcs,
+  							Dest.issue_carat = Sou.carat,
+  							Dest.modified_datetime=@current_datetime,
+  							Dest.modified_iplocation_id = @modified_iplocation_id,
+							dest.modified_by =@modified_by,
+							Dest.apps_code = @apps_code,
+  							Dest.inward_year = @TRNYEAR
+  						WHEN NOT MATCHED THEN
+  						INSERT (vendor_group_number, inward_date, vendor_code, lot_code,department_code,issue_pcs, issue_carat, inward_year, inward_time,created_datetime,created_by,created_iplocation_id)
+  						VALUES (vendor_group_number, inward_date, vendor_code, Sou.vendor_lot_code,Sou.department_code, Sou.pcs,Sou.carat, @TRNYEAR, @current_datetime,@current_datetime,@modified_by,@modified_iplocation_id);
+					
+					/* 
+				Insert Audit table form details
+				*/
+
+				INSERT INTO [Audit].[OP_REMARKS_HISTORY]([STONEID],[HISTORY_DATETIME],[OP_REMARKS],[PAGE_NAME],[CREATED_BY],[CREATED_IP_LOCATION],[APPS_CODE])
+				select	stoneid,@current_datetime,'new stone inward update','Stock Inward Form' ,@modified_by ,@modified_iplocation_id,@apps_code
+				from @stoneid
+
+				commit transaction t1
+				end try
+				Begin Catch
+					SELECT @ErrorMessage = ERROR_MESSAGE(),
+						@ErrorSeverity = ERROR_SEVERITY(),
+						@ErrorLine = ERROR_LINE()
+					ROLLBACK TRANSACTION t1
+					EXEC [dbo].[LOGINFO] @ProcedureName = 'Stock.usp_InwardMfg_Save',@LogType = 'INFO',@ErrorLine =  @ErrorLine,@ErrorMessage = @ErrorMessage,@ExecutedBy = NULL,@HostIPName = '',@FormName = '',@AdditionalInfo = 'INNER CATCH BLOCK'
+					RAISERROR (@ErrorMessage,@ErrorSeverity,1)
+ 				End Catch
+			
+  		--COMMIT TRANSACTION t1
+ 		End Try
+ 		Begin Catch
+			SELECT @ErrorMessage = ERROR_MESSAGE(),
+				@ErrorSeverity = ERROR_SEVERITY(),
+				@ErrorLine = ERROR_LINE()
+			--- EXCEUTION LOG
+			EXEC [dbo].[LOGINFO] @ProcedureName = 'Stock.usp_InwardMfg_Save',@LogType = 'INFO',@ErrorLine =  @ErrorLine,@ErrorMessage = @ErrorMessage,@ExecutedBy = NULL,@HostIPName = '',@FormName = '',@AdditionalInfo = 'CATCH BLOCK'
+        
+        RAISERROR (@ErrorMessage,@ErrorSeverity,1)
+
+ 		End Catch
+	end
+  END

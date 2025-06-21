@@ -1,0 +1,25 @@
+select s.awb_code,s.order_id,s.delivery_type,s.del_status,s.grand_total,s.payment_type,u.phone, u.username,u.address1 
+from orders o 
+left join userFromSite u on u.user_id = o.user_id 
+left join sale s on o.be_order_id = s.order_id 
+inner join awbs a on  a.awb_number = s.awb_code 
+ where s.assign=true
+
+
+
+
+select s.awb_code,s.order_id,s.order_type,s.delivery_type,s.del_status,s.grand_total,s.payment_type,sh.name,u.phone,sh.address
+from sale s  
+inner join awbs a on  a.awb_number = s.awb_code
+inner join shipping_address sh on sh.unique_id = s.shipping_address
+left join userFromSite u on sh.user_id=u.user_id where delivery_boy_id=1;
+
+
+SELECT order_id,grand_total from sale where (payment_type ='COD' or payment_type= 'cash_on_delivery') and (del_status='Picked Up' or del_status='Delivered')
+and delivery_boy_id=1
+
+SELECT sum(grand_total),delivery_boy_id from sale where (payment_type ='COD' or payment_type= 'cash_on_delivery') and (del_status='Picked Up' or del_status='Delivered')
+and (delivered_date between '2022-02-14' and '2022-02-16')
+group by delivery_boy_id
+
+select order_id,delivery_boy_name,delivery_type,del_status from sale where assign=true and delivered_date between '2022-02-14' and '2022-02-16' and delivery_boy_name=(select name from Users where id=2);

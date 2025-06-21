@@ -1,0 +1,73 @@
+{
+	"info": {
+		"_postman_id": "23ac42d0-507b-4dad-885a-15a7d0629745",
+		"name": "Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "addd admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"abc1@gmail.com\",\n    \"password\":\"abc1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/admin/register",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"admin",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"abc1@gmail.com\",\n    \"password\":\"abc1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/admin/authenticate",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"admin",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

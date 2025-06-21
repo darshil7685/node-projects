@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "5e095d0b-028d-4280-b246-5a84198c441a",
+		"name": "Warehouse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register warehouse",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"surat-2\",\n    \"location\":\"Surat\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/warehouse/register",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"warehouse",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update warehouse",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n    \"name\":\"amd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://103.254.172.218:4000/warehouse/3",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"warehouse",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all warehouses",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/warehouse/",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"warehouse",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete warehouse",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/warehouse/4",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"warehouse",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get warehouse by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/warehouse/surat-1",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"warehouse",
+						"surat-1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "count warehouse",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://103.254.172.218:4000/warehouse/countWarehouses",
+					"protocol": "http",
+					"host": [
+						"103",
+						"254",
+						"172",
+						"218"
+					],
+					"port": "4000",
+					"path": [
+						"warehouse",
+						"countWarehouses"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
